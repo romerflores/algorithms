@@ -1,3 +1,6 @@
+/*
+Este codigo realiza consultas del minimo y cantidad de minimos en un rango
+*/
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
