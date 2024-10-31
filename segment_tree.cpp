@@ -24,10 +24,10 @@ ll f(int nodo, int left_nodo,int right_nodo, int l_q,int r_q)
 }
 
 
-void update(int i;int v,int n) //actualizacion de tipo reemplazo
+void update(int i,int v,int n) //actualizacion de tipo reemplazo
 {
     tree[n+i]=v;
-    for(int i=(n+i)/2;j>=1;j/=2)
+    for(int j=(n+i)/2;j>=1;j/=2)
     {
         tree[j]=tree[2*j]+tree[2*j+1];
     }
@@ -68,13 +68,14 @@ int main()
         {
             //actualizacion
             int i,v; cin>>i>>v;
-            i--;
+            //i--;
             update(i,v,n);
         }
         else
         {
             int l,r; cin>>l>>r;
-            l--;r--;
+            //l--;
+            r--;
             cout<<f(1,0,n-1,l,r)<<endl;
         }
 
