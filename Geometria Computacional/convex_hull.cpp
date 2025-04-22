@@ -1,0 +1,116 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef long long ll;
+
+#define CRISTIANO_RONALDO_GANO_35_COPAS \
+	ios_base::sync_with_stdio(false);   \
+	cin.tie(NULL);                      \
+	cout.tie(nullptr);
+#define hola cout << "hola" << endl;
+#define YES cout << "YES" << endl;
+#define NO cout << "NO" << endl;
+#define printv(v)                      \
+	for (int i = 0; i < v.size(); i++) \
+	{                                  \
+		cout << v[i] << " ";           \
+	}                                  \
+	cout << "\n";
+#define printvii(v)                                       \
+	for (int i = 0; i < v.size(); i++)                    \
+	{                                                     \
+		cout << v[i].first << " " << v[i].second << endl; \
+	}                                                     \
+	cout << endl;
+
+#define RAYA cout << "----------------------------" << endl;
+
+// #define debug1(A) if(debug) { cerr << "? " << #A << " : " << A << endl; }
+
+const int MOD = 1000000007;
+const int INFINITO_INT = INT_MAX;
+#define dbg(x) cout << #x << " " << x << endl;
+
+struct punto
+{
+	ll x, y;
+	punto(ll x, ll y)
+	{
+		this->x = x;
+		this->y = y;
+	}
+};
+
+struct pt
+{
+	double x, y;
+	bool operator==(pt const &t) const
+	{
+		return x == t.x && y == t.y;
+	}
+};
+
+int orientation(pt a, pt b, pt c)
+{
+	double v = a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y);
+	if (v < 0)
+		return -1; // clockwise
+	if (v > 0)
+		return +1; // counter-clockwise
+	return 0;
+}
+
+bool cw(pt a, pt b, pt c, bool include_collinear)
+{
+	int o = orientation(a, b, c);
+	return o < 0 || (include_collinear && o == 0);
+}
+bool collinear(pt a, pt b, pt c) { return orientation(a, b, c) == 0; }
+
+void convex_hull(vector<pt> &a, bool include_collinear = false)
+{
+	pt p0 = *min_element(a.begin(), a.end(), [](pt a, pt b)
+						 { return make_pair(a.y, a.x) < make_pair(b.y, b.x); });
+	sort(a.begin(), a.end(), [&p0](const pt &a, const pt &b)
+		 {
+        int o = orientation(p0, a, b);
+        if (o == 0)
+            return (p0.x-a.x)*(p0.x-a.x) + (p0.y-a.y)*(p0.y-a.y)
+                < (p0.x-b.x)*(p0.x-b.x) + (p0.y-b.y)*(p0.y-b.y);
+        return o < 0; });
+	if (include_collinear)
+	{
+		int i = (int)a.size() - 1;
+		while (i >= 0 && collinear(p0, a[i], a.back()))
+			i--;
+		reverse(a.begin() + i + 1, a.end());
+	}
+
+	vector<pt> st;
+	for (int i = 0; i < (int)a.size(); i++)
+	{
+		while (st.size() > 1 && !cw(st[st.size() - 2], st.back(), a[i], include_collinear))
+			st.pop_back();
+		st.push_back(a[i]);
+	}
+
+	if (include_collinear == false && st.size() == 2 && st[0] == st[1])
+		st.pop_back();
+
+	a = st;
+}
+
+vector<pt> a;
+
+int main()
+{
+	CRISTIANO_RONALDO_GANO_35_COPAS;
+	
+	int n;cin>>n;
+	a.resize(n);
+
+	//leer como puntos
+
+	convex_hull(a,true);//true incluye colinear, false no lo hace
+
+}

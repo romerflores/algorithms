@@ -69,57 +69,6 @@ const int MOD = 1000000007;
 const int INFINITO_INT = INT_MAX;
 #define dbg(x) cout << #x << " " << x << endl;
 
-string toLower(string cad)
-{
-	for (int i = 0; i < int(cad.length()); i++)
-		if (cad[i] <= 'Z')
-			cad[i] += 32;
-	return cad;
-}
-ll sumatoriall(ll n) { return ((n * (n + 1)) / 2); }
-int sumatoriaint(int n) { return ((n * (n + 1)) / 2); }
-
-bool cmp(pair<int, pair<int, int>> a, pair<int, pair<int, int>> b)
-{
-	return a.first > b.first;
-}
-
-ll binpow(ll b, ll e)
-{
-	if (e == 0)
-		return 1;
-
-	ll pot = binpow(b, e / 2);
-	pot *= pot;
-
-	if (e & 1)
-		pot *= b;
-	return pot;
-}
-
-ll factor(ll l, ll x)
-{
-	ll num = (l - 1) / x;
-	num++;
-	return num * x;
-}
-
-ll gcd(ll a, ll b)
-{
-	if (b == 0)
-		return a;
-	return gcd(b, a % b);
-}
-
-void yesno(bool sw)
-{
-	if (sw)
-	{
-		YES;
-	}
-	else
-		NO;
-}
 
 struct Node
 {
