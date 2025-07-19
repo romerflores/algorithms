@@ -28,5 +28,20 @@ struct StrHash
         return (h[0] << 32) | h[1];
     }
 };
+
+//concate substrings from the same string
+ll concat_hash(ll a, ll b, int len_b, const StrHash& H)
+{
+    ll res[2];
+    for (int k = 0; k < 2; ++k)
+    {
+        ll ha = (a >> (32 * (1 - k))) & 0xFFFFFFFF;
+        ll hb = (b >> (32 * (1 - k))) & 0xFFFFFFFF;
+        ll pow = H.bs[k][len_b];
+        res[k] = (ha * pow + hb) % H.ms[k];
+    }
+    return (res[0] << 32) | res[1];
+}
+
 //0 indexed
 ll h=StrHash("Hola").get(0,"Hola".size());
