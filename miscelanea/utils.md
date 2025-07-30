@@ -69,27 +69,4 @@ x₂^(2) = C(2,0)*x₂ + C(2,1)*x₃ + C(2,2)*x₄
 
 ```
 
----
 
-## ⚙️ Complejidad
-
-- Preprocesamiento de factoriales e inversos: **O(n)**
-- Cada resultado: **O(k)** o **O(1)** con precomputación completa
-
----
-
-## 🏆 Aplicación en concursos
-
-- Aparece en **ICPC**, **Codeforces**, **AtCoder**, etc.
-- Técnica útil cuando se hacen transformaciones repetidas con patrón fijo sobre secuencias.
-
----
-
-## 🧠 Términos relacionados
-
-- **Convolución binomial**
-- **Transformación lineal combinatoria**
-- **Convolución discreta con kernel [1, 1]**
-```
-
-¿Quieres que te lo prepare como archivo descargable (`.md`)?
