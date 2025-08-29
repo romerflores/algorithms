@@ -16,10 +16,10 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y texlive-latex-extra python3
 
       - name: Generate codes.tex
-        run: python3 algorithms/generate_codes.py
+        run: python3 ../generate_codes.py
 
       - name: Build PDF
-        run: make -C algorithms
+        run: make
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
