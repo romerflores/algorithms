@@ -1,0 +1,1502 @@
+\section*{Math}
+
+\subsection*{matriz_fibo}
+\begin{lstlisting}
+struct matrix {
+    long long mat[2][2];
+    matrix friend operator *(const matrix &a, const matrix &b){
+        matrix c;
+        for (int i = 0; i < 2; i++) {
+          for (int j = 0; j < 2; j++) {
+              c.mat[i][j] = 0;
+              for (int k = 0; k < 2; k++) {
+                  c.mat[i][j] += a.mat[i][k] * b.mat[k][j];
+              }
+          }
+        }
+        return c;
+    }
+};
+
+matrix matpow(matrix base, long long n) {
+    matrix ans{ {
+      {1, 0},
+      {0, 1}
+    } };
+    while (n) {
+        if(n&1)
+            ans = ans*base;
+        base = base*base;
+        n >>= 1;
+    }
+    return ans;
+}
+
+ll fib(int n) {
+    matrix base{ {
+      {1, 1},
+      {1, 0}
+    } };
+    return matpow(base, n).mat[0][1];
+}\end{lstlisting}
+
+\section*{Miscelanea}
+
+\section*{Data Structures}
+
+\subsection*{fenwickTree}
+\begin{lstlisting}
+#include <bits/stdc++.h>
+
+using namespace std;
+typedef long long ll;
+
+
+struct Bit
+{
+    private:
+        vector<ll> bit;
+        int sz;
+    public:
+    
+    Bit(int n){bit.resize(n+1,0);this->sz=n;}
+
+    void init(vector<ll> vec)
+    {
+        for(int i=0;i<sz;i++)
+        {
+            update(i+1,vec[i]);
+        }
+    }
+
+    void update(int p,ll val)//1i
+    {
+        while(p<=sz)
+        {
+            bit[p]+=val;
+            p+=(p&(-p));
+        }
+    }
+    ll query(int p)//[1,p]1i
+    {
+        ll ans=0;
+        while(p>0)
+        {
+            ans+=bit[p];
+            p-=(p&-p);
+        }
+        return ans;
+    }
+
+    ll rquery(ll left,ll right)//[l,r]1i
+    {
+        return query(right)-query(left-1);
+    }
+};
+\end{lstlisting}
+
+\subsection*{lca}
+\begin{lstlisting}
+\end{lstlisting}
+
+\subsection*{segTree}
+\begin{lstlisting}
+#include <bits/stdc++.h>
+
+using namespace std;
+typedef long long ll;
+
+struct Data
+{
+    ll cant = 0;
+    Data() { cant = 1e18; }
+
+    Data(ll c) { cant = c; }
+};
+
+struct SegTree
+{
+private:
+    vector<Data> st;
+
+public:
+    int sz;
+    Data merge(Data a, Data b)
+    {
+        return min(a.cant, b.cant);
+    }
+    void init(int n, vector<Data> v)
+    {
+        while (__builtin_popcount(n) != 1)
+        {
+            n++;
+        }
+        st.resize(2 * n, Data());
+        sz = n; // solo n, NO 2*n
+        for (int i = 0; i < (int)v.size(); i++)
+        {
+            st[n + i] = v[i];
+        }
+
+        for (int i = n - 1; i > 0; --i)
+        {
+            st[i] = merge(st[i << 1], st[(i << 1) + 1]);
+        }
+    }
+
+    void updateTreeNode(int p, Data nuevoValor) // 0i pos
+    {
+        st[p + sz] = nuevoValor;
+        p = p + sz;
+        for (int i = p; i > 1; i >>= 1)
+            st[i >> 1] = merge(st[i], st[i ^ 1]);
+    }
+
+    Data query(int nodo, int left_nodo, int right_nodo, int l_q, int r_q) //
+    {
+        // query(1,0,st.sz-1,l_q,r_q) tipo->[l_q,r_q]0i
+        /*
+         los indices de los nodos empieza desde 1;
+         */
+        if (l_q <= left_nodo && right_nodo <= r_q)
+        {
+            return st[nodo];
+        }
+        if (l_q > right_nodo || left_nodo > r_q)
+        {
+            return Data();
+        }
+
+        int mitad = (left_nodo + right_nodo) / 2; ///[l:r] --> [l:mitad] [mitad+1:r]
+        return merge(query(nodo * 2, left_nodo, mitad, l_q, r_q), query(nodo * 2 + 1, mitad + 1, right_nodo, l_q, r_q));
+    }
+};
+\end{lstlisting}
+
+\section*{Strings}
+
+\subsection*{hashing}
+\begin{lstlisting}
+struct StrHash
+{ // Hash polinomial con exponentes decrecientes.
+    static constexpr ll ms[] = {1'000'000'007, 1'000'000'403};
+    static constexpr ll b = 500'000'000;
+    vector<ll> hs[2], bs[2];
+    StrHash(string const &s)
+    {
+        int n = s.length();
+        for(int k=0;k<2;k++)
+        {
+            hs[k].resize(n + 1), bs[k].resize(n + 1, 1);
+            for(int i=0;i<n;i++)
+            {
+                hs[k][i + 1] = (hs[k][i] * b + s[i]) % ms[k];
+                bs[k][i + 1] = bs[k][i] * b % ms[k];
+            }
+        }
+    }
+    ll get(int idx, int len) const
+    { // Hashes en `s[idx, idx+len)`.
+        ll h[2];
+        for(int k=0;k<2;k++)
+        {
+            h[k] = hs[k][idx + len] - hs[k][idx] * bs[k][len] % ms[k];
+            if (h[k] < 0)
+                h[k] += ms[k];
+        }
+        return (h[0] << 32) | h[1];
+    }
+};
+
+//concate substrings(or strings) from non necesary two differents strings [idx,indx+lex)
+ll concat_cross_hashes(const StrHash& A, int i1, int len1, const StrHash& B, int i2, int len2)
+{
+    ll res[2];
+    for (int k = 0; k < 2; ++k)
+    {
+        // hash de substring A[i1..i1+len1-1]
+        ll h1 = A.hs[k][i1 + len1] - A.hs[k][i1] * A.bs[k][len1] % A.ms[k];
+        if (h1 < 0) h1 += A.ms[k];
+
+        // hash de substring B[i2..i2+len2-1]
+        ll h2 = B.hs[k][i2 + len2] - B.hs[k][i2] * B.bs[k][len2] % B.ms[k];
+        if (h2 < 0) h2 += B.ms[k];
+
+        // combinación: h1 * b^len2 + h2
+        res[k] = (h1 * A.bs[k][len2] + h2) % A.ms[k];
+    }
+    return (res[0] << 32) | res[1];
+}
+
+
+//0 indexed
+ll h=StrHash("Hola").get(0,0+"Hola".size());
+\end{lstlisting}
+
+\subsection*{hashing2d}
+\begin{lstlisting}
+struct Hashing
+{
+    vector<vector<int>> hs;
+    vector<int> PWX, PWY;
+    int n, m;
+    static const int PX = 3731, PY = 2999, mod = 998244353;
+    Hashing() {}
+    Hashing(vector<string> &s)
+    {
+        n = (int)s.size(), m = (int)s[0].size();
+        hs.assign(n + 1, vector<int>(m + 1, 0));
+        PWX.assign(n + 1, 1);
+        PWY.assign(m + 1, 1);
+        for (int i = 0; i < n; i++)
+            PWX[i + 1] = 1LL * PWX[i] * PX % mod;
+        for (int i = 0; i < m; i++)
+            PWY[i + 1] = 1LL * PWY[i] * PY % mod;
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                hs[i + 1][j + 1] = s[i][j] - 'a' + 1;
+            }
+        }
+        for (int i = 0; i <= n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                hs[i][j + 1] = (hs[i][j + 1] + 1LL * hs[i][j] * PY % mod) % mod;
+            }
+        }
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j <= m; j++)
+            {
+                hs[i + 1][j] = (hs[i + 1][j] + 1LL * hs[i][j] * PX % mod) % mod;
+            }
+        }
+    }
+    int get_hash(int x1, int y1, int x2, int y2)
+    { // 1-indexed
+        assert(1 <= x1 && x1 <= x2 && x2 <= n);
+        assert(1 <= y1 && y1 <= y2 && y2 <= m);
+        x1--;
+        y1--;
+        int dx = x2 - x1, dy = y2 - y1;
+        return (1LL * (hs[x2][y2] - 1LL * hs[x2][y1] * PWY[dy] % mod + mod) % mod -
+                1LL * (hs[x1][y2] - 1LL * hs[x1][y1] * PWY[dy] % mod + mod) % mod * PWX[dx] % mod + mod) %
+               mod;
+    }
+    int get_hash()
+    {
+        return get_hash(1, 1, n, m);
+    }
+};
+\end{lstlisting}
+
+\section*{Segment Tree}
+
+\subsection*{cantidad_minimos}
+\begin{lstlisting}
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef vector<int> vi;
+
+struct info
+{
+    int num;
+    int cant=1;
+};
+
+info merge(info a, info b)
+{
+    if(a.num<b.num)
+    {
+        return a;
+    }
+    else if(a.num>b.num)
+    {
+        return b;
+    }
+    else
+    {
+        info res;
+        res.num = min(a.num, b.num);
+        res.cant=a.cant+b.cant;
+        return res;
+    }
+    
+}
+
+vector<info> st;
+int n;
+
+void buildSt(vi vec)
+{
+    for (int i = 0; i < n; i++) // Añadimos las hojas
+    {
+        info a;
+        a.num = vec[i];
+        st[n + i] = a;
+    }
+    for (int i = n - 1; i > 0; --i) // construmos los padres a partir de las hojas
+    {
+        st[i] = merge(st[i << 1], st[(i << 1) + 1]);
+    }
+}
+
+void updateTreeNode(int p, info nuevoValor)
+{
+    // set value at position p
+    st[p + n] = nuevoValor;
+    p = p + n;
+
+    // actualizar padres
+    for (int i = p; i > 1; i >>= 1)
+        st[i >> 1] = merge(st[i], st[i ^ 1]);
+}
+
+info query(int nodo, int left_nodo, int right_nodo, int l_q, int r_q)
+{
+    /*
+     los indices de los nodos empieza desde 1;
+     */
+    if (l_q <= left_nodo && right_nodo <= r_q)
+    {
+        return st[nodo];
+    }
+    if (l_q > right_nodo || left_nodo > r_q)
+    {
+        info xd;
+        xd.num = 1e9 + 5;
+        return xd; // neutro
+    }
+
+    int mitad = (left_nodo + right_nodo) / 2; ///[l:r] --> [l:mitad] [mitad+1:r]
+    return merge(query(nodo * 2, left_nodo, mitad, l_q, r_q), query(nodo * 2 + 1, mitad + 1, right_nodo, l_q, r_q));
+}
+
+int main()
+{
+    cin >> n;
+    int Q;cin>>Q;
+    vector<int> vec(n);
+    for (int i = 0; i < n; i++)
+    {
+        cin >> vec[i];
+    }
+
+    while (__builtin_popcount(n) != 1)
+    {
+        vec.push_back(1e9 + 50); // introduce neutro;
+        n++;
+    }
+    st.resize(2 * n);
+
+    buildSt(vec); // construimos el st
+
+    
+    while(Q--)
+    {
+        int q;cin>>q;
+        if(q==1){ //update, son 0 indexed
+
+            int indi;cin>>indi;
+            info val;cin>>val.num;
+            updateTreeNode(indi,val);
+
+        }
+        else
+        {
+            int l,r;cin>>l>>r;
+            //q(nodo inicio,rango inicio 0i,rango fin0i,q_inicio 0i,q_fin 0i)
+
+            info ans=query(1,0,n-1,l,r-1);//la resta a l o r denpenda del input constrait
+            cout<<ans.num<<" "<<ans.cant<<endl;
+
+        }
+    }
+
+    
+
+    return 0;
+}\end{lstlisting}
+
+\subsection*{max_segment_sum}
+\begin{lstlisting}
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef vector<int> vi;
+typedef long long ll;
+
+const ll NEG_INF = -1e15;
+
+struct info
+{
+    ll sum;
+    ll maxSuff;
+    ll maxPreff;
+    ll ans;
+};
+
+info make_data(ll num)
+{
+    info ret;
+    ret.sum = num;
+    ret.maxPreff = ret.maxSuff = ret.ans = max(0LL, num);  // <= permite segmento vacío
+    return ret;
+}
+
+info merge(info a, info b)
+{
+    info ret;
+    ret.sum = a.sum + b.sum;
+    ret.maxPreff = max({a.maxPreff, a.sum + b.maxPreff});
+    ret.maxSuff = max({b.maxSuff, b.sum + a.maxSuff});
+    ret.ans = max({a.maxSuff + b.maxPreff, a.ans, b.ans});
+    return ret;
+}
+
+info neutral()
+{
+    return {0, 0, 0, 0};
+}
+
+vector<info> st;
+int n;
+
+void buildSt(vector<ll> vec)
+{
+    for (int i = 0; i < n; i++) // Añadimos las hojas
+    {
+        if (vec[i] == NEG_INF)
+        {
+            st[n + i] = neutral();
+        }
+        else
+        {
+            info a = make_data(vec[i]);
+            st[n + i] = a;
+        }
+    }
+    for (int i = n - 1; i > 0; --i) // construmos los padres a partir de las hojas
+    {
+        st[i] = merge(st[i << 1], st[(i << 1) + 1]);
+    }
+}
+
+void updateTreeNode(int p, info nuevoValor)
+{
+    // set value at position p
+    st[p + n] = nuevoValor;
+    p = p + n;
+
+    // actualizar padres
+    for (int i = p; i > 1; i >>= 1)
+        st[i >> 1] = merge(st[i], st[i ^ 1]);
+}
+
+info query(int nodo, int left_nodo, int right_nodo, int l_q, int r_q)
+{
+    /*
+     los indices de los nodos empieza desde 1;
+     */
+    if (l_q <= left_nodo && right_nodo <= r_q)
+    {
+        return st[nodo];
+    }
+    if (l_q > right_nodo || left_nodo > r_q)
+    {
+        return neutral();
+    }
+
+    int mitad = (left_nodo + right_nodo) / 2; ///[l:r] --> [l:mitad] [mitad+1:r]
+    return merge(query(nodo * 2, left_nodo, mitad, l_q, r_q), query(nodo * 2 + 1, mitad + 1, right_nodo, l_q, r_q));
+}
+
+int main()
+{
+    cin >> n;
+    int tam = n;
+    int Q;
+    cin >> Q;
+    vector<ll> vec(n);
+    for (int i = 0; i < n; i++)
+    {
+        cin >> vec[i];
+    }
+
+    while (__builtin_popcount(n) != 1)
+    {
+        vec.push_back(NEG_INF); // introduce neutro;
+        n++;
+    }
+    st.resize(2 * n);
+
+    buildSt(vec); // construimos el st
+
+    for (int i = 1; i < 2 * n; i++)
+    {
+        if (__builtin_popcount(i) == 1)
+            cout << endl;
+        cout << st[i].sum << " ";
+    }
+    cout << endl;
+
+    cout << query(1, 0, n - 1, 0, n - 1).ans << endl;
+
+    while (Q--)
+    {
+
+        int indi;
+        cin >> indi;
+        int val;
+        cin >> val;
+        updateTreeNode(indi, make_data(val));
+        for (int i = 1; i < 2 * n; i++)
+        {
+            if (__builtin_popcount(i) == 1)
+                cout << endl;
+            cout << st[i].ans << " ";
+        }
+        cout << endl;
+        cout << st[1].ans << endl;
+    }
+    cout<<NEG_INF<<endl;
+
+    return 0;
+}\end{lstlisting}
+
+\subsection*{minimo_range}
+\begin{lstlisting}
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef vector<int> vi;
+
+struct info
+{
+    int num;
+};
+
+info merge(info a, info b)
+{
+    info res;
+    res.num = min(a.num, b.num);
+    return res;
+}
+
+vector<info> st;
+int n;
+
+void buildSt(vi vec)
+{
+    for (int i = 0; i < n; i++) // Añadimos las hojas
+    {
+        info a;
+        a.num = vec[i];
+        st[n + i] = a;
+    }
+    for (int i = n - 1; i > 0; --i) // construmos los padres a partir de las hojas
+    {
+        st[i] = merge(st[i << 1], st[(i << 1) + 1]);
+    }
+}
+
+void updateTreeNode(int p, info nuevoValor)
+{
+    // set value at position p
+    st[p + n] = nuevoValor;
+    p = p + n;
+
+    // actualizar padres
+    for (int i = p; i > 1; i >>= 1)
+        st[i >> 1] = merge(st[i], st[i ^ 1]);
+}
+
+info query(int nodo, int left_nodo, int right_nodo, int l_q, int r_q)
+{
+    /*
+     los indices de los nodos empieza desde 1;
+     */
+    if (l_q <= left_nodo && right_nodo <= r_q)
+    {
+        return st[nodo];
+    }
+    if (l_q > right_nodo || left_nodo > r_q)
+    {
+        info xd;
+        xd.num = 1e9;
+        return xd; // neutro
+    }
+
+    int mitad = (left_nodo + right_nodo) / 2; ///[l:r] --> [l:mitad] [mitad+1:r]
+    return merge(query(nodo * 2, left_nodo, mitad, l_q, r_q), query(nodo * 2 + 1, mitad + 1, right_nodo, l_q, r_q));
+}
+
+int main()
+{
+    cin >> n;
+    int Q;cin>>Q;
+    vector<int> vec(n);
+    for (int i = 0; i < n; i++)
+    {
+        cin >> vec[i];
+    }
+
+    while (__builtin_popcount(n) != 1)
+    {
+        vec.push_back(1e9); // introduce neutro;
+        n++;
+    }
+    st.resize(2 * n);
+
+    buildSt(vec); // construimos el st
+
+    
+    while(Q--)
+    {
+        int q;cin>>q;
+        if(q==1){ //update, son 0 indexed
+
+            int indi;cin>>indi;
+            info val;cin>>val.num;
+            updateTreeNode(indi,val);
+
+        }
+        else
+        {
+            int l,r;cin>>l>>r;
+            //q(nodo inicio,rango inicio 0i,rango fin0i,q_inicio 0i,q_fin 0i)
+            cout<<query(1,0,n-1,l,r-1).num<<endl;//la resta a l o r denpenda del input constrait
+
+        }
+    }
+
+    
+
+    return 0;
+}\end{lstlisting}
+
+\subsection*{sereja_and_brackets}
+\begin{lstlisting}
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef vector<int> vi;
+typedef long long ll;
+
+struct info
+{
+    int a, b, c;
+};
+
+info merge(info x, info y)
+{
+    info ret;
+    int t = min(x.b, y.c);
+    ret.a = x.a + y.a + t;
+    ret.b = x.b + y.b - t;
+    ret.c = x.c + y.c - t;
+    return ret;
+}
+
+info make_info(char ch) {
+    if (ch == '(')
+        return {0, 1, 0};
+    else
+        return {0, 0, 1};
+}
+info neutral() {
+    return {0, 0, 0};
+}
+
+vector<info> st;
+int n;
+
+void buildSt(vector<char> vec)
+{
+    for (int i = 0; i < n; i++) // Añadimos las hojas
+    {
+        st[n + i] = make_info(vec[i]);
+    }
+    for (int i = n - 1; i > 0; --i) // construmos los padres a partir de las hojas
+    {
+        st[i] = merge(st[i << 1], st[(i << 1) + 1]);
+    }
+}
+
+void updateTreeNode(int p, info nuevoValor)
+{
+    // set value at position p
+    st[p + n] = nuevoValor;
+    p = p + n;
+
+    // actualizar padres
+    for (int i = p; i > 1; i >>= 1)
+        st[i >> 1] = merge(st[i], st[i ^ 1]);
+}
+
+info query(int nodo, int left_nodo, int right_nodo, int l_q, int r_q)
+{
+    /*
+     los indices de los nodos empieza desde 1;
+     */
+    if (l_q <= left_nodo && right_nodo <= r_q)
+    {
+        return st[nodo];
+    }
+    if (l_q > right_nodo || left_nodo > r_q)
+    {
+        return neutral();
+    }
+
+    int mitad = (left_nodo + right_nodo) / 2; ///[l:r] --> [l:mitad] [mitad+1:r]
+    return merge(query(nodo * 2, left_nodo, mitad, l_q, r_q), query(nodo * 2 + 1, mitad + 1, right_nodo, l_q, r_q));
+}
+
+int main()
+{
+    string cad;
+    cin >> cad;
+    n = cad.length();
+    int Q;
+    cin >> Q;
+    bitset<10> xd;
+    vector<char> vec(n);
+    for (int i = 0; i < n; i++)
+    {
+        vec[i] = cad[i];
+    }
+
+    while (__builtin_popcount(n) != 1)
+    {
+        vec.push_back(0); // introduce neutro;
+        n++;
+    }
+    st.resize(2 * n);
+
+    buildSt(vec); // construimos el st
+
+    // los updates deben ser 0 indexed
+
+    while (Q--)
+    {
+        int l, r;
+        cin >> l >> r;
+        l--;
+        r--;
+        cout << query(1, 0, n - 1, l, r).a * 2 << endl;
+    }
+
+    return 0;
+}\end{lstlisting}
+
+\subsection*{sum}
+\begin{lstlisting}
+
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef vector<int> vi;
+typedef long long ll;
+
+struct info
+{
+    ll num;
+};
+
+info merge(info a, info b)
+{
+    info res;
+    res.num = a.num+b.num;
+    return res;
+}
+
+vector<info> st;
+int n;
+
+void buildSt(vector<ll> vec)
+{
+    for (int i = 0; i < n; i++) // Añadimos las hojas
+    {
+        info a;
+        a.num = vec[i];
+        st[n + i] = a;
+    }
+    for (int i = n - 1; i > 0; --i) // construmos los padres a partir de las hojas
+    {
+        st[i] = merge(st[i << 1], st[(i << 1) + 1]);
+    }
+}
+
+void updateTreeNode(int p, info nuevoValor)
+{
+    // set value at position p
+    st[p + n] = nuevoValor;
+    p = p + n;
+
+    // actualizar padres
+    for (int i = p; i > 1; i >>= 1)
+        st[i >> 1] = merge(st[i], st[i ^ 1]);
+}
+
+info query(int nodo, int left_nodo, int right_nodo, int l_q, int r_q)
+{
+    /*
+     los indices de los nodos empieza desde 1;
+     */
+    if (l_q <= left_nodo && right_nodo <= r_q)
+    {
+        return st[nodo];
+    }
+    if (l_q > right_nodo || left_nodo > r_q)
+    {
+        info xd;
+        xd.num = 0;
+        return xd; // neutro
+    }
+
+    int mitad = (left_nodo + right_nodo) / 2; ///[l:r] --> [l:mitad] [mitad+1:r]
+    return merge(query(nodo * 2, left_nodo, mitad, l_q, r_q), query(nodo * 2 + 1, mitad + 1, right_nodo, l_q, r_q));
+}
+
+int main()
+{
+    cin >> n;
+    int Q;
+    cin >> Q;
+    vector<ll> vec(n);
+    for (int i = 0; i < n; i++)
+    {
+        cin >> vec[i];
+    }
+
+    while (__builtin_popcount(n) != 1)
+    {
+        vec.push_back(0); // introduce neutro;
+        n++;
+    }
+    st.resize(2 * n);
+
+    buildSt(vec); // construimos el st
+
+   // los updates deben ser 0 indexed
+    
+    while(Q--)
+    {
+        int q;cin>>q;
+        if(q==1){ //update, son 0 indexed
+
+            int indi;cin>>indi;
+            info val;cin>>val.num;
+            updateTreeNode(indi,val);
+
+        }
+        else
+        {
+            int l,r;cin>>l>>r;
+            //q(nodo inicio,rango inicio 0i,rango fin0i,q_inicio 0i,q_fin 0i)
+            cout<<query(1,0,n-1,l,r-1).num<<endl;//la resta a l o r denpenda del input constrait
+
+        }
+    }
+
+
+
+    
+
+    return 0;
+}\end{lstlisting}
+
+\section*{.Github}
+
+\section*{.Github/Workflows}
+
+\section*{Geometria Computacional}
+
+\subsection*{convex_hull}
+\begin{lstlisting}
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef long long ll;
+
+#define CRISTIANO_RONALDO_GANO_35_COPAS \
+	ios_base::sync_with_stdio(false);   \
+	cin.tie(NULL);                      \
+	cout.tie(nullptr);
+#define hola cout << "hola" << endl;
+#define YES cout << "YES" << endl;
+#define NO cout << "NO" << endl;
+#define printv(v)                      \
+	for (int i = 0; i < v.size(); i++) \
+	{                                  \
+		cout << v[i] << " ";           \
+	}                                  \
+	cout << "\n";
+#define printvii(v)                                       \
+	for (int i = 0; i < v.size(); i++)                    \
+	{                                                     \
+		cout << v[i].first << " " << v[i].second << endl; \
+	}                                                     \
+	cout << endl;
+
+#define RAYA cout << "----------------------------" << endl;
+
+// #define debug1(A) if(debug) { cerr << "? " << #A << " : " << A << endl; }
+
+const int MOD = 1000000007;
+const int INFINITO_INT = INT_MAX;
+#define dbg(x) cout << #x << " " << x << endl;
+
+struct pt
+{
+	double x, y;
+	bool operator==(pt const &t) const
+	{
+		return x == t.x && y == t.y;
+	}
+};
+
+int orientation(pt a, pt b, pt c)
+{
+	double v = a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y);
+	if (v < 0)
+		return -1; // clockwise
+	if (v > 0)
+		return +1; // counter-clockwise
+	return 0;
+}
+
+bool cw(pt a, pt b, pt c, bool include_collinear)
+{
+	int o = orientation(a, b, c);
+	return o < 0 || (include_collinear && o == 0);
+}
+bool collinear(pt a, pt b, pt c) { return orientation(a, b, c) == 0; }
+
+void convex_hull(vector<pt> &a, bool include_collinear = false)
+{
+	pt p0 = *min_element(a.begin(), a.end(), [](pt a, pt b)
+						 { return make_pair(a.y, a.x) < make_pair(b.y, b.x); });
+	sort(a.begin(), a.end(), [&p0](const pt &a, const pt &b)
+		 {
+        int o = orientation(p0, a, b);
+        if (o == 0)
+            return (p0.x-a.x)*(p0.x-a.x) + (p0.y-a.y)*(p0.y-a.y)
+                < (p0.x-b.x)*(p0.x-b.x) + (p0.y-b.y)*(p0.y-b.y);
+        return o < 0; });
+	if (include_collinear)
+	{
+		int i = (int)a.size() - 1;
+		while (i >= 0 && collinear(p0, a[i], a.back()))
+			i--;
+		reverse(a.begin() + i + 1, a.end());
+	}
+
+	vector<pt> st;
+	for (int i = 0; i < (int)a.size(); i++)
+	{
+		while (st.size() > 1 && !cw(st[st.size() - 2], st.back(), a[i], include_collinear))
+			st.pop_back();
+		st.push_back(a[i]);
+	}
+
+	if (include_collinear == false && st.size() == 2 && st[0] == st[1])
+		st.pop_back();
+
+	a = st;
+}
+
+vector<pt> a;
+
+int main()
+{
+	CRISTIANO_RONALDO_GANO_35_COPAS;
+	
+	int n;cin>>n;
+	a.resize(n);
+
+	//leer como puntos
+
+	convex_hull(a,true);//true incluye colinear, false no lo hace
+
+}\end{lstlisting}
+
+\section*{Primalidad}
+
+\subsection*{Rabin_Miller}
+\begin{lstlisting}
+#include <bits/stdc++.h>
+
+using namespace std;
+
+
+using u64 = uint64_t;
+using u128 = __uint128_t;
+
+u64 binpower(u64 base, u64 e, u64 mod) {
+    u64 result = 1;
+    base %= mod;
+    while (e) {
+        if (e & 1)
+            result = (u128)result * base % mod;
+        base = (u128)base * base % mod;
+        e >>= 1;
+    }
+    return result;
+}
+
+bool check_composite(u64 n, u64 a, u64 d, int s) {
+    u64 x = binpower(a, d, n);
+    if (x == 1 || x == n - 1)
+        return false;
+    for (int r = 1; r < s; r++) {
+        x = (u128)x * x % n;
+        if (x == n - 1)
+            return false;
+    }
+    return true;
+};
+
+bool MillerRabin(u64 n, int iter=5) { // returns true if n is probably prime, else returns false.
+    cout<<iter<<endl;
+    if (n < 4)
+        return n == 2 || n == 3;
+
+    int s = 0;
+    u64 d = n - 1;
+    while ((d & 1) == 0) {
+        d >>= 1;
+        s++;
+    }
+
+    for (int i = 0; i < iter; i++) {
+        int a = 2 + rand() % (n - 3);
+        if (check_composite(n, a, d, s))
+            return false;
+    }
+    return true;
+}
+
+
+int main()
+{
+
+    cout<<MillerRabin(100000001,30)<<endl;
+    return 0;
+}\end{lstlisting}
+
+\subsection*{pollard_Rho}
+\begin{lstlisting}
+#include <iostream>
+#include <cstdlib>
+#include <cstdio>
+#include <cmath>
+#include <cassert>
+#include <map>
+
+using namespace std;
+
+typedef long long ll;
+
+#define forn(i, n) for (int i = 0; i < (int)(n); i++)
+#define forsn(i, s, n) for (int i = int(s); i < (int)(n); i++)
+
+// rabin miller
+
+ll potlog(ll a, ll b, const ll M)
+{
+    ll res = 1;
+    while (b)
+    {
+        if (b % 2)
+            res = (__int128(res) * a) % M;
+        a = (__int128(a) * a) % M;
+        b /= 2;
+    }
+    return res;
+}
+
+bool primo(ll n)
+{
+    if (n < 2)
+        return false;
+    if (n == 2)
+        return true;
+    ll D = n - 1, S = 0;
+    while (D % 2 == 0)
+    {
+        D /= 2;
+        S++;
+    }
+    // n-1 = 2^S * D
+    static const int STEPS = 16;
+    forn(pasos, STEPS)
+    {
+        const ll A = 1 + rand() % (n - 1);
+        ll M = potlog(A, D, n);
+        if (M == 1 || M == (n - 1))
+            goto next;
+        forn(k, S - 1)
+        {
+            M = (__int128(M) * M) % n;
+            if (M == (n - 1))
+                goto next;
+        }
+        return false;
+    next:;
+    }
+    return true;
+}
+
+// pollard's rho
+
+ll mcd(ll a, ll b) { return (a == 0) ? b : mcd(b % a, a); }
+
+ll factor(ll n)
+{
+    static ll A, B;
+    A = 1 + rand() % (n - 1);
+    B = 1 + rand() % (n - 1);
+#define f(x) ((__int128(x) * (x + B)) % n + A)
+    ll x = 2, y = 2, d = 1;
+    while (d == 1 || d == -1)
+    {
+        x = f(x);
+        y = f(f(y));
+        d = mcd(x - y, n);
+    }
+    return abs(d);
+}
+
+map<ll, ll> fact;
+
+void factorize(ll n)
+{
+    assert(n > 0);
+    while (n > 1 && !primo(n))
+    {
+        ll f;
+        do
+        {
+            f = factor(n);
+        } while (f == n);
+        n /= f;
+        factorize(f);
+        for (auto &it : fact)
+            while (n % it.first == 0)
+            {
+                n /= it.first;
+                it.second++;
+            }
+    }
+    if (n > 1)
+        fact[n]++;
+}
+
+int main()
+{
+    ll N;
+    while (cin >> N && N)
+    {
+        fact.clear();
+        factorize(N);
+        for (const auto &it : fact)
+            cout << it.first << "^" << it.second << " ";
+        cout << endl;
+    }
+    return 0;
+}
+\end{lstlisting}
+
+\section*{Graphs}
+
+\subsection*{toposort}
+\begin{lstlisting}
+#include <bits/stdc++.h>
+using namespace std;
+int n; // number of vertices
+vector<vector<int>> gf;
+vector<bool> vis;
+vector<int> ans;
+
+void dfs(int v) {//0i
+    vis[v] = true;
+    for (int u : gf[v]) {
+        if (!vis[u]) {
+            dfs(u);
+        }
+    }
+    ans.push_back(v);
+}
+
+void topological_sort() {
+    vis.assign(n, false);
+    ans.clear();
+    for (int i = 0; i < n; ++i) {
+        if (!vis[i]) {
+            dfs(i);
+        }
+    }
+    reverse(ans.begin(), ans.end());
+}\end{lstlisting}
+
+\section*{Overloads}
+
+\subsection*{pq}
+\begin{lstlisting}
+struct cmp
+{
+    //mayor tiene prioridad
+    bool operator()(const int& a, const int& b) const {
+        return a<b;        
+    }
+};
+
+//priority_queue<Data,vector<Data>,cmp> pq
+\end{lstlisting}
+
+\subsection*{set}
+\begin{lstlisting}
+struct cmpST
+{
+    //de menor a mayor
+    bool operator()(const int &a,const int &b)
+    {
+        return a<b;
+    }
+};
+
+//set<int,cmpST> st;
+\end{lstlisting}
+
+\section*{.Git}
+
+\section*{.Git/Hooks}
+
+\section*{.Git/Refs}
+
+\section*{.Git/Refs/Tags}
+
+\section*{.Git/Refs/Remotes}
+
+\section*{.Git/Refs/Remotes/Origin}
+
+\section*{.Git/Refs/Heads}
+
+\section*{.Git/Info}
+
+\section*{.Git/Objects}
+
+\section*{.Git/Objects/96}
+
+\section*{.Git/Objects/2F}
+
+\section*{.Git/Objects/0F}
+
+\section*{.Git/Objects/F1}
+
+\section*{.Git/Objects/83}
+
+\section*{.Git/Objects/F0}
+
+\section*{.Git/Objects/84}
+
+\section*{.Git/Objects/62}
+
+\section*{.Git/Objects/0C}
+
+\section*{.Git/Objects/5A}
+
+\section*{.Git/Objects/15}
+
+\section*{.Git/Objects/3E}
+
+\section*{.Git/Objects/1A}
+
+\section*{.Git/Objects/0A}
+
+\section*{.Git/Objects/Aa}
+
+\section*{.Git/Objects/A4}
+
+\section*{.Git/Objects/Eb}
+
+\section*{.Git/Objects/8B}
+
+\section*{.Git/Objects/Ad}
+
+\section*{.Git/Objects/B9}
+
+\section*{.Git/Objects/49}
+
+\section*{.Git/Objects/14}
+
+\section*{.Git/Objects/A5}
+
+\section*{.Git/Objects/Ac}
+
+\section*{.Git/Objects/F7}
+
+\section*{.Git/Objects/B0}
+
+\section*{.Git/Objects/0B}
+
+\section*{.Git/Objects/90}
+
+\section*{.Git/Objects/4C}
+
+\section*{.Git/Objects/68}
+
+\section*{.Git/Objects/Info}
+
+\section*{.Git/Objects/4F}
+
+\section*{.Git/Objects/61}
+
+\section*{.Git/Objects/13}
+
+\section*{.Git/Objects/F8}
+
+\section*{.Git/Objects/2E}
+
+\section*{.Git/Objects/6C}
+
+\section*{.Git/Objects/Fb}
+
+\section*{.Git/Objects/39}
+
+\section*{.Git/Objects/43}
+
+\section*{.Git/Objects/70}
+
+\section*{.Git/Objects/7A}
+
+\section*{.Git/Objects/3C}
+
+\section*{.Git/Objects/D4}
+
+\section*{.Git/Objects/27}
+
+\section*{.Git/Objects/C2}
+
+\section*{.Git/Objects/2D}
+
+\section*{.Git/Objects/A3}
+
+\section*{.Git/Objects/47}
+
+\section*{.Git/Objects/3D}
+
+\section*{.Git/Objects/8C}
+
+\section*{.Git/Objects/81}
+
+\section*{.Git/Objects/D9}
+
+\section*{.Git/Objects/73}
+
+\section*{.Git/Objects/9D}
+
+\section*{.Git/Objects/5C}
+
+\section*{.Git/Objects/B3}
+
+\section*{.Git/Objects/B2}
+
+\section*{.Git/Objects/7D}
+
+\section*{.Git/Objects/C6}
+
+\section*{.Git/Objects/Fc}
+
+\section*{.Git/Objects/12}
+
+\section*{.Git/Objects/B5}
+
+\section*{.Git/Objects/26}
+
+\section*{.Git/Objects/9E}
+
+\section*{.Git/Objects/E9}
+
+\section*{.Git/Objects/57}
+
+\section*{.Git/Objects/63}
+
+\section*{.Git/Objects/99}
+
+\section*{.Git/Objects/Ff}
+
+\section*{.Git/Objects/31}
+
+\section*{.Git/Objects/Bb}
+
+\section*{.Git/Objects/72}
+
+\section*{.Git/Objects/37}
+
+\section*{.Git/Objects/28}
+
+\section*{.Git/Objects/A1}
+
+\section*{.Git/Objects/Pack}
+
+\section*{.Git/Objects/71}
+
+\section*{.Git/Objects/1D}
+
+\section*{.Git/Objects/E6}
+
+\section*{.Git/Objects/85}
+
+\section*{.Git/Objects/94}
+
+\section*{.Git/Objects/E5}
+
+\section*{.Git/Objects/87}
+
+\section*{.Git/Objects/09}
+
+\section*{.Git/Objects/93}
+
+\section*{.Git/Objects/A6}
+
+\section*{.Git/Objects/B1}
+
+\section*{.Git/Objects/4B}
+
+\section*{.Git/Objects/7F}
+
+\section*{.Git/Objects/88}
+
+\section*{.Git/Objects/36}
+
+\section*{.Git/Objects/9F}
+
+\section*{.Git/Objects/9A}
+
+\section*{.Git/Objects/C5}
+
+\section*{.Git/Objects/05}
+
+\section*{.Git/Logs}
+
+\section*{.Git/Logs/Refs}
+
+\section*{.Git/Logs/Refs/Remotes}
+
+\section*{.Git/Logs/Refs/Remotes/Origin}
+
+\section*{.Git/Logs/Refs/Heads}
+
+\section*{.Git/Branches}
+
+\section*{.Vscode}
+
