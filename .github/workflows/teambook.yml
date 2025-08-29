@@ -26,6 +26,9 @@ jobs:
       - name: Build PDF
         run: make
 
+      - name: List files after build
+        run: ls -l
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
