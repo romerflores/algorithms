@@ -1,0 +1,27 @@
+name: Build Teambook
+
+on:
+  push:
+    branches: [ "main" ]   # o la rama que uses
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install LaTeX
+        run: sudo apt-get update && sudo apt-get install -y texlive-latex-extra
+
+      - name: Generate codes.tex
+        run: python3 generate_codes.py
+
+      - name: Build PDF
+        run: make
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: teambook
+          path: teambook.pdf

@@ -1,0 +1,27 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{listings}
+\usepackage{multicol}
+\usepackage{geometry}
+\geometry{margin=1cm}
+\setlength{\columnsep}{1cm}
+
+\lstset{
+  language=C++,
+  basicstyle=\ttfamily\small,
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  showstringspaces=false,
+  breaklines=true,
+  tabsize=2
+}
+
+\begin{document}
+\begin{multicols}{2}
+
+\section*{Teambook}
+
+\input{codes.tex}
+
+\end{multicols}
+\end{document}

@@ -31,16 +31,6 @@ const int MOD = 1000000007;
 const int INFINITO_INT = INT_MAX;
 #define dbg(x) cout << #x << " " << x << endl;
 
-struct punto
-{
-	ll x, y;
-	punto(ll x, ll y)
-	{
-		this->x = x;
-		this->y = y;
-	}
-};
-
 struct pt
 {
 	double x, y;
