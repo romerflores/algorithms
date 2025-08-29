@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/upload-artifact@v4
+      - uses: actions/checkout@v4
 
       - name: Install LaTeX
         run: sudo apt-get update && sudo apt-get install -y texlive-latex-extra
@@ -21,7 +21,7 @@ jobs:
         run: make
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: teambook
           path: teambook.pdf
