@@ -20,7 +20,7 @@ jobs:
 
 
       - name: Generate codes.tex
-        run: python3 generates_codes.py
+        run: python3 generate_codes.py
 
       - name: Build PDF
         run: make
