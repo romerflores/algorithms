@@ -43,7 +43,7 @@ ll concat_cross_hashes(const StrHash& A, int i1, int len1, const StrHash& B, int
         ll h2 = B.hs[k][i2 + len2] - B.hs[k][i2] * B.bs[k][len2] % B.ms[k];
         if (h2 < 0) h2 += B.ms[k];
 
-        // combinación: h1 * b^len2 + h2
+        // combinacion: h1 * b^len2 + h2
         res[k] = (h1 * A.bs[k][len2] + h2) % A.ms[k];
     }
     return (res[0] << 32) | res[1];

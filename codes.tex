@@ -222,7 +222,7 @@ ll concat_cross_hashes(const StrHash& A, int i1, int len1, const StrHash& B, int
         ll h2 = B.hs[k][i2 + len2] - B.hs[k][i2] * B.bs[k][len2] % B.ms[k];
         if (h2 < 0) h2 += B.ms[k];
 
-        // combinación: h1 * b^len2 + h2
+        // combinacion: h1 * b^len2 + h2
         res[k] = (h1 * A.bs[k][len2] + h2) % A.ms[k];
     }
     return (res[0] << 32) | res[1];
@@ -675,6 +675,8 @@ struct cmpST
 
 \section*{.Git/Objects/96}
 
+\section*{.Git/Objects/C0}
+
 \section*{.Git/Objects/2F}
 
 \section*{.Git/Objects/0F}
@@ -722,6 +724,8 @@ struct cmpST
 \section*{.Git/Objects/Ad}
 
 \section*{.Git/Objects/B9}
+
+\section*{.Git/Objects/04}
 
 \section*{.Git/Objects/49}
 
@@ -896,6 +900,8 @@ struct cmpST
 \section*{.Git/Objects/46}
 
 \section*{.Git/Objects/B1}
+
+\section*{.Git/Objects/5B}
 
 \section*{.Git/Objects/4B}
 
