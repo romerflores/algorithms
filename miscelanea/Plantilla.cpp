@@ -1,12 +1,12 @@
 #include <bits/stdc++.h>
-// #include <bits/extc++.h>
+#include <bits/extc++.h>
 using namespace std;
-// using namespace __gnu_pbds;
+using namespace __gnu_pbds;
 typedef long long ll;
 typedef long double ld;
 
-// typedef tree<pair<ll, ll>, null_type, less<pair<ll, ll>>, rb_tree_tag, tree_order_statistics_node_update> ordered_set_men;
-// typedef tree<int, null_type, greater<int>, rb_tree_tag, tree_order_statistics_node_update> ordered_set_may;
+typedef tree<pair<ll, ll>, null_type, less<pair<ll, ll>>, rb_tree_tag, tree_order_statistics_node_update> ordered_set_men;
+typedef tree<int, null_type, greater<int>, rb_tree_tag, tree_order_statistics_node_update> ordered_set_may;
 
 #define CRISTIANO_RONALDO_GANO_35_COPAS \
     ios_base::sync_with_stdio(false);   \
