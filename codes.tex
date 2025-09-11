@@ -2,10 +2,10 @@
 
 \subsection*{matrizFibo}
 \begin{lstlisting}
-struct matrix {
+struct Matrix {
     long long mat[2][2];
-    matrix friend operator *(const matrix &a, const matrix &b){
-        matrix c;
+    Matrix friend operator *(const Matrix &a, const Matrix &b){
+        Matrix c;
         for (int i = 0; i < 2; i++) {
           for (int j = 0; j < 2; j++) {
               c.mat[i][j] = 0;
@@ -17,9 +17,8 @@ struct matrix {
         return c;
     }
 };
-
-matrix matpow(matrix base, long long n) {
-    matrix ans{ {
+Matrix matpow(Matrix base, long long n) {
+    Matrix ans{ {
       {1, 0},
       {0, 1}
     } };
@@ -31,9 +30,8 @@ matrix matpow(matrix base, long long n) {
     }
     return ans;
 }
-
 ll fib(int n) {
-    matrix base{ {
+    Matrix base{ {
       {1, 1},
       {1, 0}
     } };
@@ -42,64 +40,193 @@ ll fib(int n) {
 
 \section*{Miscelanea}
 
+\subsection*{Plantilla}
+\begin{lstlisting}
+#include <bits/stdc++.h>
+// #include <bits/extc++.h>
+using namespace std;
+// using namespace __gnu_pbds;
+typedef long long ll;
+typedef long double ld;
+
+// typedef tree<pair<ll, ll>, null_type, less<pair<ll, ll>>, rb_tree_tag, tree_order_statistics_node_update> ordered_set_men;
+// typedef tree<int, null_type, greater<int>, rb_tree_tag, tree_order_statistics_node_update> ordered_set_may;
+
+#define CRISTIANO_RONALDO_GANO_35_COPAS \
+    ios_base::sync_with_stdio(false);   \
+    cin.tie(NULL);                      \
+    cout.tie(nullptr);
+#define hola cout << "hola" << endl;
+#define YES cout << "YES" << endl;
+#define NO cout << "NO" << endl;
+#define dbg(x) cout << #x << ": " << x << endl;
+#define dbg2(x, y) cout << #x << ": " << x << " __ " << #y << ": " << y << endl;
+#define printvii(v_v)                      \
+    for (auto [x_x, y_y] : v_v)            \
+    {                                      \
+        cout << x_x << " " << y_y << endl; \
+    }                                      \
+    cout << endl;
+
+#define printst(st)         \
+    for (auto num : st)     \
+        cout << num << " "; \
+    cout << endl;
+template <typename T>
+void printv(T v)
+{
+    for (auto x : v)
+        cout << x << " ";
+    cout << endl;
+}
+
+#define RAYA cout << "----------------------------" << endl;
+// #define F first
+// #define S second
+const ll MOD = 1'000'000'007;
+const vector<int> F = {0, 1, 0, -1};
+const vector<int> C = {1, 0, -1, 0};
+
+int main()
+{
+    CRISTIANO_RONALDO_GANO_35_COPAS
+    //sol
+    return 0;
+}\end{lstlisting}
+
 \section*{Datastructures}
 
-\subsection*{fenwickTree}
+\subsection*{LowestCommonAncestor}
 \begin{lstlisting}
 #include <bits/stdc++.h>
 
 using namespace std;
-typedef long long ll;
 
+int n, m;//nodos, links
+vector<int> h;//altura del nodo
+vector<int> primera;//primera aparicion
+// set<int> st;
+vector<bool> vis;
+vector<vector<int>> gf;
+vector<int> nodo;//nodo 
 
-struct Bit
+void dfs(int currt, int alt)
 {
-    private:
-        vector<ll> bit;
-        int sz;
-    public:
-    
-    Bit(int n){bit.resize(n+1,0);this->sz=n;}
-
-    void init(vector<ll> vec)
+    if (!vis[currt])
     {
-        for(int i=0;i<sz;i++)
+        primera[currt] = h.size();
+    }
+    vis[currt] = 1;
+    h.push_back(alt);
+    nodo.push_back(currt);
+
+    for (int hijo : gf[currt])
+    {
+        if (!vis[hijo])
         {
-            update(i+1,vec[i]);
+            dfs(hijo, alt + 1);
+            h.push_back(alt);
+            nodo.push_back(currt);
         }
     }
+}
 
-    void update(int p,ll val)//1i
-    {
-        while(p<=sz)
-        {
-            bit[p]+=val;
-            p+=(p&(-p));
-        }
-    }
-    ll query(int p)//[1,p]1i
-    {
-        ll ans=0;
-        while(p>0)
-        {
-            ans+=bit[p];
-            p-=(p&-p);
-        }
-        return ans;
-    }
+int main()
+{
+    vis.assign(n, 0);
+    primera.assign(n, -1);
+    gf.assign(n, vector<int>());
+    // st.clear();
+    h.clear();
+    nodo.clear();
+    //0i
+    dfs(0, 0);
 
-    ll rquery(ll left,ll right)//[l,r]1i
-    {
-        return query(right)-query(left-1);
-    }
-};
-\end{lstlisting}
+    //hacer un segmet tree sobre h que es la altura, y responder cout<<nodo[res] donde res es el indice del minimo en el rango, para minimo en rango, donde l y r son los dos nodos
+    return 0;
+}\end{lstlisting}
 
-\subsection*{lca}
+\subsection*{QueueMin}
 \begin{lstlisting}
-\end{lstlisting}
+struct quemin
+{
+	stack<pair<int,int>> bo, to;
+	void push(int n)
+	{
+		if(bo.empty())
+			bo.push(mp(n, n));	
+		else
+			bo.push(mp(n, min(bo.top().s, n)));
+	}
+	void pop()
+	{
+		if(to.empty())
+		{
+			while(!bo.empty())
+			{
+				if(to.empty())
+					to.push(mp(bo.top().f, bo.top().f));
+				else
+					to.push(mp(bo.top().f, min(bo.top().f, to.top().s)));
+				bo.pop();
+			}
+		}
+		to.pop();
+	}
+	int mini()
+	{
+		int mini = MOD;
+		if(!bo.empty())
+			mini = bo.top().s;
+		if(!to.empty())
+			mini = min(mini, to.top().s);
+		return mini;
+	}
+};
 
-\subsection*{segTree}
+struct quemin
+{
+	pair<int,int> bo[100010], to[100010];
+	int boto = -1, toto = -1, ax;
+	void push(int n)
+	{
+		ax = boto + 1;
+		if(boto == -1)
+			bo[ax] = mp(n, n);	
+		else
+			bo[ax] = mp(n, min(bo[boto].s, n));
+		boto++;
+	}
+	void pop()
+	{
+		if(toto == -1)
+		{
+			while(boto > -1)
+			{
+				ax = toto + 1;
+				if(toto == -1)
+					to[ax] = mp(bo[boto].f, bo[boto].f);
+				else
+					to[ax] = mp(bo[boto].f, min(bo[boto].f, to[toto].s));
+				toto++;
+				boto--;
+			}
+		}
+		if(toto > -1)
+			toto--;
+	}
+	int mini()
+	{
+		int mini = MOD;
+		if(boto > -1)
+			mini = bo[boto].s;
+		if(toto > -1)
+			mini = min(mini, to[toto].s);
+		return mini;
+	}
+};\end{lstlisting}
+
+\subsection*{SegmentTree}
 \begin{lstlisting}
 #include <bits/stdc++.h>
 
@@ -169,6 +296,106 @@ public:
 
         int mitad = (left_nodo + right_nodo) / 2; ///[l:r] --> [l:mitad] [mitad+1:r]
         return merge(query(nodo * 2, left_nodo, mitad, l_q, r_q), query(nodo * 2 + 1, mitad + 1, right_nodo, l_q, r_q));
+    }
+};
+\end{lstlisting}
+
+\subsection*{SparseTable}
+\begin{lstlisting}
+struct SparseTable {
+    int n;
+    vector<int> log2;
+    vector<vector<int>> st;
+
+    SparseTable(const vector<int>& a) {
+        n = a.size();
+        log2.resize(n + 1);
+        log2[1] = 0;
+        for (int i = 2; i <= n; i++)
+            log2[i] = log2[i/2] + 1;
+
+        int k = log2[n] + 1;
+        st.assign(n, vector<int>(k));
+
+        for (int i = 0; i < n; i++) st[i][0] = a[i];
+
+        for (int j = 1; j < k; j++)
+            for (int i = 0; i + (1 << j) <= n; i++)
+                st[i][j] = min(st[i][j-1], st[i + (1 << (j-1))][j-1]);
+    }
+
+    // Consulta de minimo en el rango [l, r]oi
+    int query(int l, int r) {
+        int j = log2[r - l + 1];
+        return min(st[l][j], st[r - (1 << j) + 1][j]);
+    }
+};\end{lstlisting}
+
+\subsection*{UnionFind}
+\begin{lstlisting}
+struct unionFind {
+  vi p;
+  unionFind(int n) : p(n, -1) {}
+  int findParent(int v) {
+    if (p[v] == -1) return v;
+    return p[v] = findParent(p[v]);
+  }
+  bool join(int a, int b) {
+    a = findParent(a);
+    b = findParent(b);
+    if (a == b) return false;
+    p[a] = b;
+    return true;
+  }
+};\end{lstlisting}
+
+\subsection*{fenwickTree}
+\begin{lstlisting}
+#include <bits/stdc++.h>
+
+using namespace std;
+typedef long long ll;
+
+
+struct Bit
+{
+    private:
+        vector<ll> bit;
+        int sz;
+    public:
+    
+    Bit(int n){bit.resize(n+1,0);this->sz=n;}
+
+    void init(vector<ll> vec)
+    {
+        for(int i=0;i<sz;i++)
+        {
+            update(i+1,vec[i]);
+        }
+    }
+
+    void update(int p,ll val)//1i
+    {
+        while(p<=sz)
+        {
+            bit[p]+=val;
+            p+=(p&(-p));
+        }
+    }
+    ll query(int p)//[1,p]1i
+    {
+        ll ans=0;
+        while(p>0)
+        {
+            ans+=bit[p];
+            p-=(p&-p);
+        }
+        return ans;
+    }
+
+    ll rquery(ll left,ll right)//[l,r]1i
+    {
+        return query(right)-query(left-1);
     }
 };
 \end{lstlisting}
@@ -292,11 +519,46 @@ struct Hashing
 };
 \end{lstlisting}
 
-\section*{.Github}
-
-\section*{.Github/Workflows}
-
 \section*{Geometry}
+
+\subsection*{Point}
+\begin{lstlisting}
+/*typedef double T;
+typedef complex<T> pt;
+#define x real()
+#define y imag()*/
+
+//typedef long long ll;
+//typedef long double ll;
+
+struct point
+{
+	ll x, y;
+	point() {}
+	point(ll x, ll y): x(x), y(y) {}
+	point operator -(point p) {return point(x - p.x, y - p.y);}
+	point operator +(point p) {return point(x + p.x, y + p.y);}
+	ll sq() {return x * x + y * y;}
+	double abs() {return sqrt(sq());}
+	ll operator ^(point p) {return x * p.y - y * p.x;}
+  	ll operator *(point p) {return x * p.x + y * p.y;}
+  	point operator *(ll a) {return point(x * a, y * a);}
+	bool operator <(const point& p) const {return x == p.x ? y < p.y : x < p.x;}
+	bool left(point a, point b) {return ((b - a) ^ (*this - a)) >= 0;}
+	ostream& operator<<(ostream& os) {
+		return os << "("<< x << "," << y << ")";
+	}
+
+};
+
+void polarSort(vector<point>& v) {
+  sort(v.begin(), v.end(), [] (point a, point b) {
+    const point origin{0, 0};
+    bool ba = a < origin, bb = b < origin;
+    if (ba != bb) { return ba < bb; }
+    return (a^b) > 0;
+  });
+}\end{lstlisting}
 
 \subsection*{convexHull}
 \begin{lstlisting}
@@ -304,34 +566,6 @@ struct Hashing
 using namespace std;
 
 typedef long long ll;
-
-#define CRISTIANO_RONALDO_GANO_35_COPAS \
-	ios_base::sync_with_stdio(false);   \
-	cin.tie(NULL);                      \
-	cout.tie(nullptr);
-#define hola cout << "hola" << endl;
-#define YES cout << "YES" << endl;
-#define NO cout << "NO" << endl;
-#define printv(v)                      \
-	for (int i = 0; i < v.size(); i++) \
-	{                                  \
-		cout << v[i] << " ";           \
-	}                                  \
-	cout << "\n";
-#define printvii(v)                                       \
-	for (int i = 0; i < v.size(); i++)                    \
-	{                                                     \
-		cout << v[i].first << " " << v[i].second << endl; \
-	}                                                     \
-	cout << endl;
-
-#define RAYA cout << "----------------------------" << endl;
-
-// #define debug1(A) if(debug) { cerr << "? " << #A << " : " << A << endl; }
-
-const int MOD = 1000000007;
-const int INFINITO_INT = INT_MAX;
-#define dbg(x) cout << #x << " " << x << endl;
 
 struct pt
 {
@@ -396,13 +630,10 @@ vector<pt> a;
 
 int main()
 {
-	CRISTIANO_RONALDO_GANO_35_COPAS;
 	
 	int n;cin>>n;
 	a.resize(n);
-
 	//leer como puntos
-
 	convex_hull(a,true);//true incluye colinear, false no lo hace
 
 }\end{lstlisting}
@@ -596,6 +827,29 @@ int main()
 
 \section*{Graphs}
 
+\subsection*{isDag}
+\begin{lstlisting}
+vector<vector<int>> gf;  // lista de adyacencia
+vector<int> visited;     // 0 = no visitado, 1 = visitando, 2 = visitado
+
+bool dfs(int u) {
+    visited[u] = 1; // visitando
+    for (int v : gf[u]) {
+        if (visited[v] == 1) return true;  // ciclo detectado
+        if (visited[v] == 0 && dfs(v)) return true;
+    }
+    visited[u] = 2; // visitado
+    return false;
+}
+
+bool isDAG(int n) {
+    visited.assign(n, 0);
+    for (int i = 0; i < n; i++)
+        if (visited[i] == 0 && dfs(i))
+            return false;  // hay ciclo
+    return true; // no hay ciclos
+}\end{lstlisting}
+
 \subsection*{toposort}
 \begin{lstlisting}
 #include <bits/stdc++.h>
@@ -654,284 +908,4 @@ struct cmpST
 
 //set<int,cmpST> st;
 \end{lstlisting}
-
-\section*{.Git}
-
-\section*{.Git/Hooks}
-
-\section*{.Git/Refs}
-
-\section*{.Git/Refs/Tags}
-
-\section*{.Git/Refs/Remotes}
-
-\section*{.Git/Refs/Remotes/Origin}
-
-\section*{.Git/Refs/Heads}
-
-\section*{.Git/Info}
-
-\section*{.Git/Objects}
-
-\section*{.Git/Objects/96}
-
-\section*{.Git/Objects/C0}
-
-\section*{.Git/Objects/2F}
-
-\section*{.Git/Objects/0F}
-
-\section*{.Git/Objects/F1}
-
-\section*{.Git/Objects/03}
-
-\section*{.Git/Objects/83}
-
-\section*{.Git/Objects/F0}
-
-\section*{.Git/Objects/84}
-
-\section*{.Git/Objects/62}
-
-\section*{.Git/Objects/0C}
-
-\section*{.Git/Objects/5A}
-
-\section*{.Git/Objects/40}
-
-\section*{.Git/Objects/F3}
-
-\section*{.Git/Objects/15}
-
-\section*{.Git/Objects/3E}
-
-\section*{.Git/Objects/Bc}
-
-\section*{.Git/Objects/1A}
-
-\section*{.Git/Objects/0A}
-
-\section*{.Git/Objects/Aa}
-
-\section*{.Git/Objects/A4}
-
-\section*{.Git/Objects/Eb}
-
-\section*{.Git/Objects/10}
-
-\section*{.Git/Objects/8B}
-
-\section*{.Git/Objects/Ad}
-
-\section*{.Git/Objects/B9}
-
-\section*{.Git/Objects/04}
-
-\section*{.Git/Objects/49}
-
-\section*{.Git/Objects/14}
-
-\section*{.Git/Objects/A5}
-
-\section*{.Git/Objects/Ac}
-
-\section*{.Git/Objects/F7}
-
-\section*{.Git/Objects/B0}
-
-\section*{.Git/Objects/0B}
-
-\section*{.Git/Objects/90}
-
-\section*{.Git/Objects/4C}
-
-\section*{.Git/Objects/Ea}
-
-\section*{.Git/Objects/68}
-
-\section*{.Git/Objects/Info}
-
-\section*{.Git/Objects/4F}
-
-\section*{.Git/Objects/5E}
-
-\section*{.Git/Objects/61}
-
-\section*{.Git/Objects/13}
-
-\section*{.Git/Objects/F8}
-
-\section*{.Git/Objects/2E}
-
-\section*{.Git/Objects/6C}
-
-\section*{.Git/Objects/Fb}
-
-\section*{.Git/Objects/78}
-
-\section*{.Git/Objects/39}
-
-\section*{.Git/Objects/B7}
-
-\section*{.Git/Objects/56}
-
-\section*{.Git/Objects/43}
-
-\section*{.Git/Objects/70}
-
-\section*{.Git/Objects/7B}
-
-\section*{.Git/Objects/7A}
-
-\section*{.Git/Objects/3C}
-
-\section*{.Git/Objects/D4}
-
-\section*{.Git/Objects/27}
-
-\section*{.Git/Objects/C2}
-
-\section*{.Git/Objects/2D}
-
-\section*{.Git/Objects/A3}
-
-\section*{.Git/Objects/Ca}
-
-\section*{.Git/Objects/47}
-
-\section*{.Git/Objects/3D}
-
-\section*{.Git/Objects/25}
-
-\section*{.Git/Objects/1C}
-
-\section*{.Git/Objects/Dc}
-
-\section*{.Git/Objects/8C}
-
-\section*{.Git/Objects/81}
-
-\section*{.Git/Objects/7E}
-
-\section*{.Git/Objects/D9}
-
-\section*{.Git/Objects/73}
-
-\section*{.Git/Objects/9D}
-
-\section*{.Git/Objects/5C}
-
-\section*{.Git/Objects/B3}
-
-\section*{.Git/Objects/B2}
-
-\section*{.Git/Objects/58}
-
-\section*{.Git/Objects/76}
-
-\section*{.Git/Objects/7D}
-
-\section*{.Git/Objects/C6}
-
-\section*{.Git/Objects/Fc}
-
-\section*{.Git/Objects/B8}
-
-\section*{.Git/Objects/12}
-
-\section*{.Git/Objects/B5}
-
-\section*{.Git/Objects/26}
-
-\section*{.Git/Objects/9E}
-
-\section*{.Git/Objects/Bf}
-
-\section*{.Git/Objects/E9}
-
-\section*{.Git/Objects/57}
-
-\section*{.Git/Objects/63}
-
-\section*{.Git/Objects/99}
-
-\section*{.Git/Objects/Ff}
-
-\section*{.Git/Objects/5D}
-
-\section*{.Git/Objects/A8}
-
-\section*{.Git/Objects/31}
-
-\section*{.Git/Objects/Bb}
-
-\section*{.Git/Objects/72}
-
-\section*{.Git/Objects/F5}
-
-\section*{.Git/Objects/37}
-
-\section*{.Git/Objects/28}
-
-\section*{.Git/Objects/A1}
-
-\section*{.Git/Objects/Pack}
-
-\section*{.Git/Objects/71}
-
-\section*{.Git/Objects/1D}
-
-\section*{.Git/Objects/E6}
-
-\section*{.Git/Objects/85}
-
-\section*{.Git/Objects/94}
-
-\section*{.Git/Objects/E5}
-
-\section*{.Git/Objects/87}
-
-\section*{.Git/Objects/09}
-
-\section*{.Git/Objects/93}
-
-\section*{.Git/Objects/A6}
-
-\section*{.Git/Objects/46}
-
-\section*{.Git/Objects/B1}
-
-\section*{.Git/Objects/5B}
-
-\section*{.Git/Objects/4B}
-
-\section*{.Git/Objects/7F}
-
-\section*{.Git/Objects/88}
-
-\section*{.Git/Objects/36}
-
-\section*{.Git/Objects/9F}
-
-\section*{.Git/Objects/9A}
-
-\section*{.Git/Objects/C5}
-
-\section*{.Git/Objects/D1}
-
-\section*{.Git/Objects/05}
-
-\section*{.Git/Logs}
-
-\section*{.Git/Logs/Refs}
-
-\section*{.Git/Logs/Refs/Remotes}
-
-\section*{.Git/Logs/Refs/Remotes/Origin}
-
-\section*{.Git/Logs/Refs/Heads}
-
-\section*{.Git/Branches}
-
-\section*{.Vscode}
 

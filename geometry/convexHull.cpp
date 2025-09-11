@@ -3,34 +3,6 @@ using namespace std;
 
 typedef long long ll;
 
-#define CRISTIANO_RONALDO_GANO_35_COPAS \
-	ios_base::sync_with_stdio(false);   \
-	cin.tie(NULL);                      \
-	cout.tie(nullptr);
-#define hola cout << "hola" << endl;
-#define YES cout << "YES" << endl;
-#define NO cout << "NO" << endl;
-#define printv(v)                      \
-	for (int i = 0; i < v.size(); i++) \
-	{                                  \
-		cout << v[i] << " ";           \
-	}                                  \
-	cout << "\n";
-#define printvii(v)                                       \
-	for (int i = 0; i < v.size(); i++)                    \
-	{                                                     \
-		cout << v[i].first << " " << v[i].second << endl; \
-	}                                                     \
-	cout << endl;
-
-#define RAYA cout << "----------------------------" << endl;
-
-// #define debug1(A) if(debug) { cerr << "? " << #A << " : " << A << endl; }
-
-const int MOD = 1000000007;
-const int INFINITO_INT = INT_MAX;
-#define dbg(x) cout << #x << " " << x << endl;
-
 struct pt
 {
 	double x, y;
@@ -94,13 +66,10 @@ vector<pt> a;
 
 int main()
 {
-	CRISTIANO_RONALDO_GANO_35_COPAS;
 	
 	int n;cin>>n;
 	a.resize(n);
-
 	//leer como puntos
-
 	convex_hull(a,true);//true incluye colinear, false no lo hace
 
 }

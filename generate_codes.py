@@ -2,9 +2,15 @@ import os
 
 base = "."  # la raíz donde están todas las subcarpetas
 
-with open("codes.tex", "w") as out:
+ignore_dirs = {".git", "__pycache__",".github",".vscode"}  # carpetas a ignorar
+ignore_files = {".DS_Store", ".pdf", ".md"}  # archivos a ignorar
+
+with open("codes.tex", "w", encoding="utf-8") as out:
     for root, dirs, files in os.walk(base):
-        # Ignorar archivos en la raíz si quieres solo carpetas
+        # Ignorar carpetas no deseadas
+        dirs[:] = [d for d in dirs if d not in ignore_dirs]
+
+        # Ignorar la raíz si quieres solo subcarpetas
         if root == ".":
             continue
 
@@ -15,7 +21,7 @@ with open("codes.tex", "w") as out:
 
         # Archivos C++
         for file in sorted(files):
-            if file.endswith(".cpp"):
+            if file.endswith(".cpp") and file not in ignore_files:
                 name = file.replace(".cpp", "")
                 out.write(f"\\subsection*{{{name}}}\n")
                 out.write("\\begin{lstlisting}\n")

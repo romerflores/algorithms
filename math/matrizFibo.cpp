@@ -1,7 +1,7 @@
-struct matrix {
+struct Matrix {
     long long mat[2][2];
-    matrix friend operator *(const matrix &a, const matrix &b){
-        matrix c;
+    Matrix friend operator *(const Matrix &a, const Matrix &b){
+        Matrix c;
         for (int i = 0; i < 2; i++) {
           for (int j = 0; j < 2; j++) {
               c.mat[i][j] = 0;
@@ -13,9 +13,8 @@ struct matrix {
         return c;
     }
 };
-
-matrix matpow(matrix base, long long n) {
-    matrix ans{ {
+Matrix matpow(Matrix base, long long n) {
+    Matrix ans{ {
       {1, 0},
       {0, 1}
     } };
@@ -27,9 +26,8 @@ matrix matpow(matrix base, long long n) {
     }
     return ans;
 }
-
 ll fib(int n) {
-    matrix base{ {
+    Matrix base{ {
       {1, 1},
       {1, 0}
     } };

@@ -1,33 +1,86 @@
-
-
-\documentclass[10pt,a4paper]{article}
+\documentclass[10pt,landscape,letterpaper,notitlepage]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[spanish]{babel}
-\usepackage{listings}
-\usepackage{multicol}
+\usepackage[spanish,activeacute]{babel}
 \usepackage{geometry}
-\geometry{margin=1cm}
-\setlength{\columnsep}{1cm}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{amssymb}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{makeidx}
+\usepackage{multicol}
+\usepackage{hyperref}
 
-\lstset{
-  language=C++,
-  basicstyle=\ttfamily\small,
-  numbers=left,
-  numberstyle=\tiny,
-  stepnumber=1,
-  showstringspaces=false,
-  breaklines=true,
-  tabsize=2
+%%% Márgenes para aprovechar toda la hoja horizontal
+\geometry{
+    paper=letterpaper,
+    landscape,
+    top=1cm,
+    bottom=2cm,
+    left=2cm,
+    right=1.5cm,
+    columnsep=1cm
 }
 
-\begin{document}
-\begin{multicols}{2}
+%%% Encabezado y pie de página
+\pagestyle{fancy}
+\fancyhead{} % limpiar encabezado
+\fancyfoot[C]{Pagina \thepage\ de \pageref{LastPage}} % pie de página centrado
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.4pt}
 
-\section*{Teambook}
+%%% Colores para Listings
+\definecolor{myred}{rgb}{0.8,0,0}      % rojo
+\definecolor{mygreen}{rgb}{0,0.6,0}    % verde
+\definecolor{mylila}{rgb}{0.6,0,0.6}   % lila/morado
+
+
+\lstloadlanguages{C++}
+\lstset{
+    language=C++, 
+    basicstyle=\ttfamily\normalsize,  % ligeramente más grande
+    keywordstyle=\color{myred}\ttfamily,
+    stringstyle=\color{magenta}\ttfamily,
+    commentstyle=\color{mygreen}\ttfamily,
+    morecomment=[l][\color{mygreen}]{\#},
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    frame=l,
+    framesep=2pt,
+    breaklines=true,
+    breakatwhitespace=false,
+    columns=fixed,
+    linewidth=\columnwidth,
+    showstringspaces=false,
+    tabsize=2,
+    flexiblecolumns=false,
+    lineskip=0pt
+}
+
+%%% Macros
+\def\nbtitle#1{\begin{Large}\begin{center}\textbf{#1}\end{center}\end{Large}}
+\def\nbsection#1{\section{#1}}
+\def\nbsubsection#1{\subsection{#1}}
+\def\nbcoment#1{\begin{small}\textbf{#1}\end{small}}
+\newcommand{\comb}[2]{\left( \begin{array}{c} #1 \\ #2 \end{array}\right)}
+\def\complexity#1{\texorpdfstring{$\mathcal{O}(#1)$}{O(#1)}}
+\newcommand{\cppfile}[2]{\lstinputlisting[style=C++,linerange={#1}]{#2}}
+
+\begin{document}
+
+\nbtitle{HandBook de romerproblem}
+
+\begin{multicols*}{2}
 
 \input{codes.tex}
 
-\end{multicols}
+\end{multicols*}
+
 \end{document}

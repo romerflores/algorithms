@@ -2,6 +2,8 @@
     "files.associations": {
         "*.embeddedhtml": "html",
         "*.md": "markdown",
-        "iostream": "cpp"
+        "*.yml": "yaml",
+        "iostream": "cpp",
+        "list": "cpp"
     }
 }
