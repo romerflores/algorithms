@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2025.8.29)  10 SEP 2025 23:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2025.8.29)  13 SEP 2025 10:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -567,13 +567,13 @@ File: t1cmtt.fd 2022/07/10 v2.5l Standard LaTeX font definitions
 ) [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4] [5]
-LaTeX Font Info:    Trying to load font information for U+msa on input line 420
+LaTeX Font Info:    Trying to load font information for U+msa on input line 448
 .
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 420
+LaTeX Font Info:    Trying to load font information for U+msb on input line 448
 .
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
@@ -589,10 +589,10 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 15251 strings out of 477989
- 230911 string characters out of 5839005
- 2464330 words of memory out of 5000000
- 34307 multiletter control sequences out of 15000+600000
+ 15347 strings out of 477989
+ 232339 string characters out of 5839005
+ 2474330 words of memory out of 5000000
+ 34346 multiletter control sequences out of 15000+600000
  518911 words of font info for 47 fonts, out of 8000000 for 9000
  40 hyphenation exceptions out of 8191
  75i,12n,76p,236b,2127s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -602,10 +602,10 @@ ec/ectt1000.600pk> </home/romerproblem/.texlive2022/texmf-var/fonts/pk/ljfour/j
 knappen/ec/ecrm0500.600pk> </home/romerproblem/.texlive2022/texmf-var/fonts/pk/
 ljfour/jknappen/ec/ecbx1200.600pk> </home/romerproblem/.texlive2022/texmf-var/f
 onts/pk/ljfour/jknappen/ec/ecbx1440.600pk>
-Output written on main.pdf (12 pages, 115945 bytes).
+Output written on main.pdf (12 pages, 120841 bytes).
 PDF statistics:
- 1339 PDF objects out of 1440 (max. 8388607)
- 1133 compressed objects within 12 object streams
- 891 named destinations out of 1000 (max. 500000)
+ 1413 PDF objects out of 1440 (max. 8388607)
+ 1201 compressed objects within 13 object streams
+ 948 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

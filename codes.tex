@@ -43,14 +43,14 @@ ll fib(int n) {
 \subsection*{Plantilla}
 \begin{lstlisting}
 #include <bits/stdc++.h>
-// #include <bits/extc++.h>
+#include <bits/extc++.h>
 using namespace std;
-// using namespace __gnu_pbds;
+using namespace __gnu_pbds;
 typedef long long ll;
 typedef long double ld;
 
-// typedef tree<pair<ll, ll>, null_type, less<pair<ll, ll>>, rb_tree_tag, tree_order_statistics_node_update> ordered_set_men;
-// typedef tree<int, null_type, greater<int>, rb_tree_tag, tree_order_statistics_node_update> ordered_set_may;
+typedef tree<pair<ll, ll>, null_type, less<pair<ll, ll>>, rb_tree_tag, tree_order_statistics_node_update> ordered_set_men;
+typedef tree<int, null_type, greater<int>, rb_tree_tag, tree_order_statistics_node_update> ordered_set_may;
 
 #define CRISTIANO_RONALDO_GANO_35_COPAS \
     ios_base::sync_with_stdio(false);   \
@@ -401,6 +401,34 @@ struct Bit
 \end{lstlisting}
 
 \section*{Strings}
+
+\subsection*{KMP}
+\begin{lstlisting}
+vector<int> prefix_function(string s)
+{
+    int n = (int)s.length();
+    vector<int> pi(n);
+    for (int i = 1; i < n; i++)
+    {
+        int j = pi[i - 1];
+        while (j > 0 && s[i] != s[j])
+            j = pi[j - 1];
+        if (s[i] == s[j])
+            j++;
+        pi[i] = j;
+    }
+    return pi;
+}
+
+inline void solve()
+{
+    string texto, sub;
+    cin >> texto >> sub;
+    int n = texto.size();
+    int m = sub.size();
+    vector<int> vec = prefix_function(sub + "$" + texto);
+    cout << count(vec.begin(), vec.end(), m) << endl;
+}\end{lstlisting}
 
 \subsection*{hashing}
 \begin{lstlisting}
@@ -848,6 +876,37 @@ bool isDAG(int n) {
         if (visited[i] == 0 && dfs(i))
             return false;  // hay ciclo
     return true; // no hay ciclos
+}\end{lstlisting}
+
+\subsection*{isDagv2}
+\begin{lstlisting}
+vector<vector<int>> gf;
+vector<bool> vis;
+set<int> st;
+bool sw = 1;
+int n;
+
+void isDAG(int nodo)
+{
+    // no olvidar recorrer con un for todo
+    //ya que no siempre estan conectados
+    if (!sw)return;
+    vis[nodo] = 1;
+    st.insert(nodo);
+    for (auto hijo : gf[nodo])
+    {
+        if (st.count(hijo) == 1)
+        {
+            sw = 0;
+            return;
+        }
+        if (!vis[hijo])
+        {
+            vis[hijo] = 1;
+            isDAG(hijo);
+        }
+    }
+    st.erase(nodo);
 }\end{lstlisting}
 
 \subsection*{toposort}
