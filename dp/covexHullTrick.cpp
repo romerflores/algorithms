@@ -9,6 +9,7 @@ struct ConvexHull
     bool tapa(Ln l1, Ln l2, Ln l3)//verifica si con al agregar la linea 3 la 2 se vuelve irrelevante
     {
         return (__int128)(l3.m-l2.m)*(l1.b-l3.b)>=(__int128)(l2.b-l3.b)*(l3.m-l1.m);
+        //<= para maximos
     }
     void addLine(Ln nueva)
     {
@@ -39,6 +40,7 @@ struct ConvexHull
         while(l < r)
         {
             int mid = (l + r) / 2;
+            //>= para maximos
             if(f(mid) <= f(mid + 1))r = mid;
             else l = mid + 1;
         }
