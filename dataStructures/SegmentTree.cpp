@@ -49,12 +49,18 @@ struct SegmentTree
         int m=(l_n+r_n)/2;
         return query(2*nodo,l_n,m,l_q,r_q)+query(2*nodo+1,m+1,r_n,l_q,r_q);
     }
- 
-    int first_ge(int nodo,int l_n,int r_n,ll num)
+    
+    //(1,0,sz-1,l_q,r_q,val)[0i]s
+    int get_first(int v, int tl, int tr, int l, int r, int x) 
     {
-        if(l_n==r_n)return l_n;
-        int m=(l_n+r_n)/2;
-        if(st[2*nodo].maxi>=num)return first_ge(nodo*2,l_n,m,num);
-        else return first_ge(nodo*2+1,m+1,r_n,num);
+        if(tl > r || tr < l) return -1;
+        if(t[v] <= x) return -1;
+
+        if (tl== tr) return tl;
+
+        int tm = tl + (tr-tl)/2;
+        int left = get_first(2*v, tl, tm, l, r, x);
+        if(left != -1) return left;
+        return get_first(2*v+1, tm+1, tr, l ,r, x);
     }
 };
