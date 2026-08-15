@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2025.8.29)  15 AUG 2026 00:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2025.8.29)  15 AUG 2026 00:46
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -558,19 +558,32 @@ Package hyperref Info: Link coloring OFF on input line 76.
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
- (./codes.tex
+ (./main.toc
+LaTeX Info: Redefining \. on input line 1.
+LaTeX Info: Redefining \% on input line 1.
+)
+\tf@toc=\write4
+\openout4 = `main.toc'.
+
+ [1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./codes.tex
 LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 4
 .
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2022/07/10 v2.5l Standard LaTeX font definitions
-) [1
-
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4] [5]
+)
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.83 #
+      define RAYA cout << "----------------------------" << endl; [1] [2]
+[3] [4] [5]
 LaTeX Font Info:    Trying to load font information for U+msa on input line 448
 .
-
-(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+ (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 448
@@ -589,23 +602,23 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 15347 strings out of 477989
- 232339 string characters out of 5839005
- 2474330 words of memory out of 5000000
- 34346 multiletter control sequences out of 15000+600000
+ 15353 strings out of 477989
+ 232398 string characters out of 5839005
+ 2463330 words of memory out of 5000000
+ 34348 multiletter control sequences out of 15000+600000
  518911 words of font info for 47 fonts, out of 8000000 for 9000
  40 hyphenation exceptions out of 8191
- 75i,12n,76p,236b,2127s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,76p,236b,2130s stack positions out of 10000i,1000n,20000p,200000b,200000s
  </home/romerproblem/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1
 000.600pk> </home/romerproblem/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/
 ec/ectt1000.600pk> </home/romerproblem/.texlive2022/texmf-var/fonts/pk/ljfour/j
 knappen/ec/ecrm0500.600pk> </home/romerproblem/.texlive2022/texmf-var/fonts/pk/
 ljfour/jknappen/ec/ecbx1200.600pk> </home/romerproblem/.texlive2022/texmf-var/f
 onts/pk/ljfour/jknappen/ec/ecbx1440.600pk>
-Output written on main.pdf (12 pages, 120227 bytes).
+Output written on main.pdf (13 pages, 120919 bytes).
 PDF statistics:
- 1410 PDF objects out of 1440 (max. 8388607)
- 1201 compressed objects within 13 object streams
- 948 named destinations out of 1000 (max. 500000)
+ 1417 PDF objects out of 1440 (max. 8388607)
+ 1206 compressed objects within 13 object streams
+ 949 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
