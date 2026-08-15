@@ -19,7 +19,7 @@ struct StrHash {
 
     vector<ull> h, p;
 
-    // Multiplicacion modular rápida O(1) sin %
+    // Multiplicacion modular rapida O(1) sin %
     static inline ull mul(ull a, ull b) {
         unsigned __int128 prod = (unsigned __int128)a * b;
         ull r = (ull)(prod & MOD) + (ull)(prod >> 61);
