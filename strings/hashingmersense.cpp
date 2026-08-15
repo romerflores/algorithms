@@ -6,7 +6,7 @@ struct StrHash {
 
     static const ull MOD = (1ULL << 61) - 1;
     
-    // Generación de base aleatoria segura
+    // Generacion de base aleatoria segura
     static ull get_base() {
         static ull B = 0;
         if (B == 0) {
@@ -19,7 +19,7 @@ struct StrHash {
 
     vector<ull> h, p;
 
-    // Multiplicación modular rápida O(1) sin %
+    // Multiplicacion modular rápida O(1) sin %
     static inline ull mul(ull a, ull b) {
         unsigned __int128 prod = (unsigned __int128)a * b;
         ull r = (ull)(prod & MOD) + (ull)(prod >> 61);
@@ -27,14 +27,14 @@ struct StrHash {
         return r;
     }
 
-    // Suma modular rápida
+    // Suma modular rapida
     static inline ull add(ull a, ull b) {
         ull res = a + b;
         if (res >= MOD) res -= MOD;
         return res;
     }
 
-    // Resta modular rápida
+    // Resta modular rapida
     static inline ull sub(ull a, ull b) {
         ull res = a - b;
         if (a < b) res += MOD;
