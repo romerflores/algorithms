@@ -1,1 +1,81 @@
 \babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Math}{1}{section.1}%
+\contentsline {subsection}{\numberline {1.1}\texttt {matrizFibo}}{1}{subsection.1.1}%
+\contentsline {section}{\numberline {2}Ultimos}{1}{section.2}%
+\contentsline {subsection}{\numberline {2.1}\texttt {FordFulkerson}}{1}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}\texttt {HoprofKarp}}{1}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}\texttt {centroid}}{2}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}\texttt {dinitz}}{4}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}\texttt {edmonkarp}}{5}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}\texttt {extended}}{5}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}\texttt {fastgcd}}{6}{subsection.2.7}%
+\contentsline {subsection}{\numberline {2.8}\texttt {fft}}{6}{subsection.2.8}%
+\contentsline {subsection}{\numberline {2.9}\texttt {gauss\_algebra\_lineal}}{7}{subsection.2.9}%
+\contentsline {subsection}{\numberline {2.10}\texttt {geometrynotes}}{7}{subsection.2.10}%
+\contentsline {subsection}{\numberline {2.11}\texttt {hld}}{7}{subsection.2.11}%
+\contentsline {subsection}{\numberline {2.12}\texttt {iterativequerysegment}}{9}{subsection.2.12}%
+\contentsline {subsection}{\numberline {2.13}\texttt {khun}}{9}{subsection.2.13}%
+\contentsline {subsection}{\numberline {2.14}\texttt {laticepoint}}{10}{subsection.2.14}%
+\contentsline {subsection}{\numberline {2.15}\texttt {lcs}}{10}{subsection.2.15}%
+\contentsline {subsection}{\numberline {2.16}\texttt {linearsieve}}{10}{subsection.2.16}%
+\contentsline {subsection}{\numberline {2.17}\texttt {lis}}{11}{subsection.2.17}%
+\contentsline {subsection}{\numberline {2.18}\texttt {nearestVecino}}{11}{subsection.2.18}%
+\contentsline {subsection}{\numberline {2.19}\texttt {pointintpoligon}}{12}{subsection.2.19}%
+\contentsline {subsection}{\numberline {2.20}\texttt {starsandbars}}{13}{subsection.2.20}%
+\contentsline {subsection}{\numberline {2.21}\texttt {suffixarray}}{13}{subsection.2.21}%
+\contentsline {subsection}{\numberline {2.22}\texttt {trie}}{13}{subsection.2.22}%
+\contentsline {subsection}{\numberline {2.23}\texttt {trie2}}{15}{subsection.2.23}%
+\contentsline {subsection}{\numberline {2.24}\texttt {twoSegmentIntersec}}{15}{subsection.2.24}%
+\contentsline {section}{\numberline {3}Updates}{16}{section.3}%
+\contentsline {subsection}{\numberline {3.1}\texttt {2-sat}}{16}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}\texttt {ahocorasick}}{17}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}\texttt {componentes\_fuertemente\_conexos}}{18}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}\texttt {floyd\_warshall}}{18}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}\texttt {lazy}}{18}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Bits}{19}{section.4}%
+\contentsline {subsection}{\numberline {4.1}\texttt {SoSDP}}{19}{subsection.4.1}%
+\contentsline {section}{\numberline {5}Miscelanea}{19}{section.5}%
+\contentsline {subsection}{\numberline {5.1}\texttt {Plantilla}}{19}{subsection.5.1}%
+\contentsline {section}{\numberline {6}Datastructures}{20}{section.6}%
+\contentsline {subsection}{\numberline {6.1}\texttt {LowestCommonAncestor}}{20}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}\texttt {Mo}}{20}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}\texttt {QueueMin}}{22}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}\texttt {SegmentTree}}{23}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}\texttt {SparseTable}}{24}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}\texttt {UnionFind}}{24}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}\texttt {UnionFind2D}}{24}{subsection.6.7}%
+\contentsline {subsection}{\numberline {6.8}\texttt {fenwickTree}}{25}{subsection.6.8}%
+\contentsline {subsection}{\numberline {6.9}\texttt {sqrt}}{25}{subsection.6.9}%
+\contentsline {subsection}{\numberline {6.10}\texttt {sqrtUpdateinSqrt}}{26}{subsection.6.10}%
+\contentsline {section}{\numberline {7}Strings}{27}{section.7}%
+\contentsline {subsection}{\numberline {7.1}\texttt {KMP}}{27}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}\texttt {hashing}}{27}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}\texttt {hashing2d}}{28}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}\texttt {hashingmersense}}{29}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}\texttt {manacher}}{29}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}\texttt {zfunction}}{30}{subsection.7.6}%
+\contentsline {section}{\numberline {8}Geometry}{30}{section.8}%
+\contentsline {subsection}{\numberline {8.1}\texttt {KDTree}}{30}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}\texttt {Point}}{31}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}\texttt {convexHull}}{32}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}\texttt {pointinpoligon}}{33}{subsection.8.4}%
+\contentsline {section}{\numberline {9}Primalidad}{34}{section.9}%
+\contentsline {subsection}{\numberline {9.1}\texttt {RabinMiller}}{34}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}\texttt {pollardRho}}{35}{subsection.9.2}%
+\contentsline {section}{\numberline {10}Graphs}{36}{section.10}%
+\contentsline {subsection}{\numberline {10.1}\texttt {articulationpoint}}{36}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}\texttt {bridges}}{36}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}\texttt {dijstra}}{37}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}\texttt {dinic}}{37}{subsection.10.4}%
+\contentsline {subsection}{\numberline {10.5}\texttt {eulerianpath}}{38}{subsection.10.5}%
+\contentsline {subsection}{\numberline {10.6}\texttt {isDag}}{39}{subsection.10.6}%
+\contentsline {subsection}{\numberline {10.7}\texttt {isDagv2}}{40}{subsection.10.7}%
+\contentsline {subsection}{\numberline {10.8}\texttt {khunMaxbipartiteMatching}}{40}{subsection.10.8}%
+\contentsline {subsection}{\numberline {10.9}\texttt {lcabinaryliftin}}{41}{subsection.10.9}%
+\contentsline {subsection}{\numberline {10.10}\texttt {toposort}}{41}{subsection.10.10}%
+\contentsline {section}{\numberline {11}Overloads}{42}{section.11}%
+\contentsline {subsection}{\numberline {11.1}\texttt {pq}}{42}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}\texttt {set}}{42}{subsection.11.2}%
+\contentsline {section}{\numberline {12}Dp}{42}{section.12}%
+\contentsline {subsection}{\numberline {12.1}\texttt {covexHullTrick}}{42}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}\texttt {list}}{43}{subsection.12.2}%
