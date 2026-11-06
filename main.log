@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2025.8.29)  6 NOV 2026 16:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2025.8.29)  6 NOV 2026 16:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -632,9 +632,9 @@ ljfour/jknappen/ec/ectt1000.600pk> </home/romerproblem/.texlive2022/texmf-var/f
 onts/pk/ljfour/jknappen/ec/ecrm1000.600pk> </home/romerproblem/.texlive2022/tex
 mf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000.600pk> </home/romerproblem/.texlive
 2022/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk>
-Output written on main.pdf (56 pages, 384146 bytes).
+Output written on main.pdf (56 pages, 384419 bytes).
 PDF statistics:
- 6026 PDF objects out of 6186 (max. 8388607)
+ 6027 PDF objects out of 6186 (max. 8388607)
  5660 compressed objects within 57 object streams
  4245 named destinations out of 4296 (max. 500000)
  705 words of extra memory for PDF output out of 10000 (max. 10000000)
