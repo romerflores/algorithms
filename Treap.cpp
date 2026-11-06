@@ -24,7 +24,7 @@
 
   🧠 Uso típico:
     - Para mantener una lista ordenada dinámicamente, con elementos repetidos.
-    - Para encontrar el k-ésimo menor/mayor elemento en tiempo logarítmico.
+    - Para encontrar el k-esimo menor/mayor elemento en tiempo logarítmico.
     - Para estructuras de datos que necesitan multiset + indexación eficiente.
 
   🛠️ Tiempo esperado por operación: O(log n)

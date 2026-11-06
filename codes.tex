@@ -1,410 +1,35 @@
 \section{Math}
 
-\subsection{\texttt{matrizFibo}}
+\subsection{\texttt{Catalan}}
 \begin{lstlisting}
-#include <bits/stdc++.h>
-using namespace std;
+// Catalan, parentesis balanceados, arboles binarios, triangulacion poligono convexto de n + 2 lados, caminos en grilla sin atravesar diagonal
+// Cat[n] = C(2n, n) / (n + 1)
+// C(n, k) es el coeficiente binomial
+Cat[0] = 1;
+Cat[n+1] = Cat[n] * 2 * (2 * n + 1) / (n + 2);
+Cat[n] = Cat[n-1] * 2 * (2 * n - 1) / (n + 1);
 
-typedef long long ll;
-const ll MOD = 1'000'000'007;
-
-struct Matrix {
-    ll mat[2][2];
-};
-
-Matrix operator*(const Matrix &a, const Matrix &b){
-    Matrix c{};
-    for (int i = 0; i < 2; i++)
-        for (int j = 0; j < 2; j++) {
-            __int128 tmp = 0;
-            for (int k = 0; k < 2; k++)
-                tmp += (__int128)a.mat[i][k] * b.mat[k][j];
-            c.mat[i][j] = (ll)(tmp % MOD);
-        }
-    return c;
-}
-
-Matrix matpow(Matrix base, ll n) {
-    Matrix ans{{ {1, 0}, {0, 1} }};
-    while (n) {
-        if (n & 1) ans = ans * base;
-        base = base * base;
-        n >>= 1;
-    }
-    return ans;
-}
-
-ll fib(ll n) {
-    if (n == 0) return 0;
-    Matrix base{{ {1,1}, {1,0} }};
-    return matpow(base, n).mat[0][1];
-}
-
-int main(){
-    ll n;
-    cin >> n;
-    cout << fib(n) << "\n";
-}
-\end{lstlisting}
-
-\section{Ultimos}
-
-\subsection{\texttt{FordFulkerson}}
-\begin{lstlisting}
-//O(E*F)donde F flujo maximo
-
-int dfs(int v, int t, int pushed) {
-    if (v == t) return pushed;
-    vis[v] = 1;
-
-    for (auto &e : G[v]) {
-        if (!vis[e.to] && e.cap > 0) {
-            int f = dfs(e.to, t, min(pushed, e.cap));
-            if (f) {
-                e.cap -= f;
-                G[e.to][e.rev].cap += f;
-                return f;
-            }
-        }
-    }
-    return 0;
-}
-
-int maxflow(int s, int t) {
-    int flow = 0;
-    while (true) {
-        fill(vis.begin(), vis.end(), 0);
-        int pushed = dfs(s, t, INF);
-        if (!pushed) break;
-        flow += pushed;
-    }
-    return flow;
-}\end{lstlisting}
-
-\subsection{\texttt{HoprofKarp}}
-\begin{lstlisting}
-
-//complejidad Exraiz(v)
-struct HopcroftKarp{
-    const int INF = 1e9 + 7;
-    HopcroftKarp(){}
-    HopcroftKarp(int nLeft, int nRight){ init(nLeft, nRight); }
-
-    void init(int nLeft, int nRight){
-        L = nLeft, R = nRight;
-        G.clear(), G.resize(L);
-        pairU.assign(L, -1), pairV.assign(R, -1);
-        dist.resize(L), Q.resize(L);
-    }
-
-    int L, R;
-    vector<vi> G;
-    vi pairU, pairV, dist, Q;
-
-    void addEdge(int u, int v){ G[u].pb(v); }
-
-    bool bfs(){
-        int qh = 0, qt = 0;
-        for(int u = 0; u < L; u++){
-            if(pairU[u] == -1) dist[u] = 0, Q[qt++] = u;
-            else dist[u] = INF;
-        }
-        bool ok = 0;
-        while(qh < qt){
-            int u = Q[qh++];
-            for(int v : G[u]){
-                int u2 = pairV[v];
-                if(u2 == -1) ok = 1;
-                else if(dist[u2] == INF) dist[u2] = dist[u] + 1, Q[qt++] = u2;
-            }
-        }
-        return ok;
-    }
-
-    bool dfs(int u){
-        for(int v : G[u]){
-            int u2 = pairV[v];
-            if(u2 == -1 || (dist[u2] == dist[u] + 1 && dfs(u2))){
-                pairU[u] = v, pairV[v] = u;
-                return 1;
-            }
-        }
-        dist[u] = INF;
-        return 0;
-    }
-
-    int maxMatching(){
-        pairU.assign(L, -1), pairV.assign(R, -1);
-        int match = 0;
-        while(bfs()) for(int u = 0; u < L; u++)
-            if(pairU[u] == -1 && dfs(u)) match++;
-        return match;
-    }
-};\end{lstlisting}
-
-\subsection{\texttt{centroid}}
-\begin{lstlisting}
-#include <bits/stdc++.h>
-using namespace std;
-
-typedef long long ll;
-const int MAXN=1e5;
-vector<int> gf[MAXN];
-bool die[MAXN]={};
-int ch[MAXN]={};
-int n,q;
-
-vector<int> min_dist(MAXN,1e9);
-
-int get_sz_subTree(int nodo,int p)
-{
-    ch[nodo]=1;
-    for(int &h:gf[nodo])
-    {
-        if(die[h] or h==p)continue;
-        ch[nodo]+=get_sz_subTree(h,nodo);
-    }
-    return ch[nodo];
-}
-
-int get_centroid(int nodo,int p,int sz)
-{
-    for(int &h:gf[nodo])
-    {
-        if(die[h] or h==p)continue;
-        if(ch[h]*2>sz)return get_centroid(h,nodo,sz);
-    }
-    return nodo;
-}
-
-vector<pair<int,int>> ancenstros[MAXN];
-
-void get_dist(int nodo,int p,int lvl,int cent)
-{
-    ancenstros[nodo].push_back({cent,lvl});
-    for(int &h:gf[nodo])
-    {
-        if(h!=p and !die[h])
-        {
-            get_dist(h,nodo,lvl+1,cent);
-        }
-    }
-}
-
-void sexo_decomposition(int nodo)
-{
-    int cent=get_centroid(nodo,-1,get_sz_subTree(nodo,-1));
-    //algo
-
-    for(int &h:gf[cent])
-    {
-        if(!die[h])
-        {
-            get_dist(h,cent,1,cent);
-        }
-    }
-
-
-    die[cent]=1;
-    for(int &h:gf[cent])if(!die[h])sexo_decomposition(h);    
-}
-
-void pintar(int nodo)
-{
-    for(auto &[ancestro,dis]:ancenstros[nodo])
-    {
-        min_dist[ancestro]=min(min_dist[ancestro],dis);
-    }
-    min_dist[nodo]=0;
-}
-
-int query(int nodo)
-{
-    int res=min_dist[nodo];
-
-    for(auto [ancient,dist]:ancenstros[nodo])
-    {
-        res=min(res,dist+min_dist[ancient]);
-    }
-    return res;
-
-}
-
+// Convolucion Catalan, parentesis balanceados en k cajas
+// Catk[n] = C(2n + k - 1, n) * k / (n + k)
+Catk[0] = 1;
+Catk[n + 1] = Catk[n] * (2 * n + k) * (2 * n + 1 + k) / (n + 1) / (n + k + 1);
+Catk[n] = Catk[n - 1] * (2 * n + k - 1) * (2 * n + k - 2) / n / (n + k);
 
 int main()
 {
-    cin.tie(nullptr)->sync_with_stdio(false);
-    cin>>n>>q;
-
-    for(int i=0;i<n-1;i++)
-    {
-        int a,b;cin>>a>>b;
-        a--;b--;
-        gf[a].push_back(b);
-        gf[b].push_back(a);
-    }
-
-    sexo_decomposition(0);
-
-    pintar(0);
-
-    while(q--)
-    {
-        int type;cin>>type;
-        int v;cin>>v;v--;
-        if(type&1)
-        {
-            pintar(v);
-        }
-        else
-        {
-            cout<<query(v)<<"\n";
-        }
-    }
-
-
-
-
-    return 0;
-
-}\end{lstlisting}
-
-\subsection{\texttt{dinitz}}
-\begin{lstlisting}
-//O((V^2)*E)
-
-//Dinic igual complejidad
-
-struct Dinitz{
-    const int INF = 1e9 + 7;
-    Dinitz(){}
-    Dinitz(int n, int s, int t) {init(n, s, t);}
-
-    void init(int n, int s, int t)
-    {
-        S = s, T = t;
-        nodes = n;
-        G.clear(), G.resize(n);
-        Q.resize(n);
-    }
-    struct flowEdge
-    {
-        int to, rev, f, cap;
-    };
-
-    vector<vector<flowEdge> > G;
-
-    // Aniade arista (st -> en) con su capacidad
-    void addEdge(int st, int en, int cap) {
-        flowEdge A = {en, (int)G[en].size(), 0, cap};
-        flowEdge B = {st, (int)G[st].size(), 0, 0};
-        G[st].pb(A);
-        G[en].pb(B);
-    }
-
-    int nodes, S, T; // asignar estos valores al armar el grafo G
-                    // nodes = nodos en red de flujo. Hacer G.clear(); G.resize(nodes);
-    vi work, lvl;
-    vi Q;
-
-    bool bfs() {
-        int qt = 0;
-        Q[qt++] = S;
-        lvl.assign(nodes, -1);
-        lvl[S] = 0;
-        for (int qh = 0; qh < qt; qh++) {
-            int v = Q[qh];
-            for (flowEdge &e : G[v]) {
-                int u = e.to;
-                if (e.cap <= e.f || lvl[u] != -1) continue;
-                lvl[u] = lvl[v] + 1;
-                Q[qt++] = u;
-            }
-        }
-        return lvl[T] != -1;
-    }
-
-    int dfs(int v, int f) {
-        if (v == T || f == 0) return f;
-        for (int &i = work[v]; i < G[v].size(); i++) {
-            flowEdge &e = G[v][i];
-            int u = e.to;
-            if (e.cap <= e.f || lvl[u] != lvl[v] + 1) continue;
-            int df = dfs(u, min(f, e.cap - e.f));
-            if (df) {
-                e.f += df;
-                G[u][e.rev].f -= df;
-                return df;
-            }
-        }
-        return 0;
-    }
-
-    int maxFlow() {
-        int flow = 0;
-        while (bfs()) {
-            work.assign(nodes, 0);
-            while (true) {
-                int df = dfs(S, INF);
-                if (df == 0) break;
-                flow += df;
-            }
-        }
-        return flow;
-    }
-};\end{lstlisting}
-
-\subsection{\texttt{edmonkarp}}
-\begin{lstlisting}
-//O(V*(E^2))
-
-int n;
-vector<vector<int>> capacity;
-vector<vector<int>> adj;
-
-int bfs(int s, int t, vector<int>& parent) {
-    fill(parent.begin(), parent.end(), -1);
-    parent[s] = -2;
-    queue<pair<int, int>> q;
-    q.push({s, INF});
-
-    while (!q.empty()) {
-        int cur = q.front().first;
-        int flow = q.front().second;
-        q.pop();
-
-        for (int next : adj[cur]) {
-            if (parent[next] == -1 && capacity[cur][next]) {
-                parent[next] = cur;
-                int new_flow = min(flow, capacity[cur][next]);
-                if (next == t)
-                    return new_flow;
-                q.push({next, new_flow});
-            }
-        }
-    }
-
-    return 0;
+	// count the number of plane trees with a given set of leaves, 
+	// the number of ways of inserting parentheses into a sequence, 
+	// and the number of ways of dissecting a convex polygon into smaller polygons by inserting diagonals
+	ll scat[26];//super catalan
+	scat[0]=scat[1]=1;
+	for(int i=2;i<26;i++)
+		scat[i]=(3*(2*i-1)*scat[i-1]-(i-2)*scat[i-2])/(i+1);
+	ll cat[26];
+	for(int i=0;i<26;i++)
+		cat[i]=cata(i);
+	return 0;
 }
-
-int maxflow(int s, int t) {
-    int flow = 0;
-    vector<int> parent(n);
-    int new_flow;
-
-    while (new_flow = bfs(s, t, parent)) {
-        flow += new_flow;
-        int cur = t;
-        while (cur != s) {
-            int prev = parent[cur];
-            capacity[prev][cur] -= new_flow;
-            capacity[cur][prev] += new_flow;
-            cur = prev;
-        }
-    }
-
-    return flow;
-}\end{lstlisting}
+\end{lstlisting}
 
 \subsection{\texttt{extended}}
 \begin{lstlisting}
@@ -538,280 +163,6 @@ int gauss (vector < bitset<N> > a, int n, int m, bitset<N> & ans) {
     return 1;
 }\end{lstlisting}
 
-\subsection{\texttt{geometrynotes}}
-\begin{lstlisting}
-/**
- *
- *
- * Paralelas:          ax * by - ay * bx == 0
- * Perpendiculares:    ax * bx + ay * by == 0
- *
- *
- * Ecuacion punto-pendiente:
- * y - y1 = m * (x - x1)
- *
- * Pendiente:
- * m = (y2 - y1) / (x2 - x1)
- *
- * Si trabajas con pendientes:
- * m1 == m2       -> paralelas
- * m1 * m2 == -1  -> perpendiculares
- *
- */\end{lstlisting}
-
-\subsection{\texttt{hld}}
-\begin{lstlisting}
-
-const int MAXN=2e5;
-vector<int> gf[MAXN];
-int parent[MAXN],depth[MAXN],heavy[MAXN],head[MAXN],pos[MAXN];
-int cur_pos;
-const ll MOD=1000000007;
- 
-int n;
-
-int dfs(int nodo)
-{
-    int size=1;
-    int max_c_size=0;
-    for(int &c:gf[nodo])
-    {   
-        if(c!=parent[nodo])
-        {
-            parent[c]=nodo;
-            depth[c]=depth[nodo]+1;
- 
-            int c_size=dfs(c);
-            size+=c_size;
- 
-            if(c_size>max_c_size)
-            {
-                max_c_size=c_size;
-                heavy[nodo]=c;
-            }
-        }
-    }
-    return size;
-}
- 
-void update_on_vertex(int a, int b, ll val)
-{
-    for(; head[a] != head[b]; b = parent[head[b]])
-    {
-        if(depth[head[a]] > depth[head[b]])
-            swap(a,b);
- 
-        st.update(1,0,st.sz-1,pos[head[b]],pos[b],val);
-    }
- 
-    if(depth[a] > depth[b])
-        swap(a,b);
- 
-    st.update(1,0,st.sz-1,pos[a],pos[b],val);
-}
- 
-ll query_on_vertex(int a, int b)
-{
-    ll res = 0;
- 
-    for(; head[a] != head[b]; b = parent[head[b]])
-    {
-        if(depth[head[a]] > depth[head[b]])
-            swap(a,b);
- 
-        res = max(res , st.query(1,0,st.sz-1,pos[head[b]],pos[b]));
-    }
- 
-    if(depth[a] > depth[b])
-        swap(a,b);
- 
-    res = max(res , st.query(1,0,st.sz-1,pos[a],pos[b]));
-    return res;
-}
- 
- 
-void decompose(int v,int h)
-{
-    head[v]=h;
-    pos[v]=cur_pos++;
-    if(heavy[v]!=-1)
-    {
-        decompose(heavy[v],h);
-    }
-    for(int &c:gf[v])
-    {
-        if(c!=parent[v] && c!=heavy[v])
-        {
-            decompose(c,c);
-        }
-    }
-}
- 
-void init()
-{
-    // parent=vector<int>(n);
-    // depth=vector<int>(n);
-    // heavy=vector<int>(n);
-    // head=vector<int>(n);
-    // pos=vector<int>(n);
-    for(int i=0;i<MAXN;i++)heavy[i]=-1;
-    cur_pos=0;
- 
-    dfs(0);
-    decompose(0,0);
-}
- 
- 
-void update(int a,int b, ll val)//es query y update a la vez
-{
-    for(;head[a]!=head[b];b=parent[head[b]])
-    {
-        if(depth[head[a]]>depth[head[b]])swap(a,b);
-        // ll resdomer=st.query()
-        st.update(1,0,st.sz-1,pos[head[b]],pos[b],val);
-        // res=(res*resdomer)%MOD;
-    }
- 
-    if(depth[a]>depth[b])swap(a,b);
- 
-    if(a != b)st.update(1,0,st.sz-1,pos[a]+1,pos[b],val);
-}
- 
- 
-ll query(int a,int b)//quety on edges
-{
-    ll res=0;
- 
-    for(;head[a]!=head[b];b=parent[head[b]])
-    {
-        if(depth[head[a]]>depth[head[b]])swap(a,b);
-        // ll resdomer=st.query()
-        ll redomer=st.query(1,0,st.sz-1,pos[head[b]],pos[b]);
-        res=(res+redomer);
-    }
- 
-    if(depth[a]>depth[b])swap(a,b);
- 
- 
-    ll last_heavy_path_res=0;
-    if(a != b)last_heavy_path_res=st.query(1,0,st.sz-1,pos[a]+1,pos[b]);
- 
-    // ll last_heavy_path_res=1;
-    res=(res+last_heavy_path_res);
-    return res;
-}
- \end{lstlisting}
-
-\subsection{\texttt{iterativequerysegment}}
-\begin{lstlisting}
-int query(int l, int r)
-{
-    int ans = INT_MIN;
-
-    for(l += n, r += n; l <= r; l >>= 1, r >>= 1)
-    {
-        if(l & 1) ans = max(ans, st[l++]);
-        if(!(r & 1)) ans = max(ans, st[r--]);
-    }
-
-    return ans;
-}\end{lstlisting}
-
-\subsection{\texttt{khun}}
-\begin{lstlisting}
-//O(LxE)
-
-struct Kuhn{
-    Kuhn(){}
-    Kuhn(int nLeft, int nRight){ init(nLeft, nRight); }
-
-    void init(int nLeft, int nRight){
-        L = nLeft, R = nRight;
-        G.clear(), G.resize(L);
-        mt.assign(R, -1);
-        used.assign(L, 0);
-        cc = 1;
-    }
-
-    int L, R, cc;
-    vector<vi> G;
-    vi mt, used; // mt[to] = nodo izquierdo emparejado con to
-
-    void addEdge(int u, int v){ G[u].pb(v); }
-
-    bool dfs(int v){
-        if(used[v] == cc) return 0;
-        used[v] = cc;
-        for(int to : G[v]) if(mt[to] == -1 || dfs(mt[to])) return mt[to] = v, 1;
-        return 0;
-    }
-
-    int maxMatching(){
-        mt.assign(R, -1);
-        int match = 0;
-        for(int v = 0; v < L; v++){
-            ++cc;
-            if(dfs(v)) match++;
-        }
-        return match;
-    }
-};\end{lstlisting}
-
-\subsection{\texttt{laticepoint}}
-\begin{lstlisting}
-//calculates number of integer points (x ; y) such for 0 <= x < n and 0 < y <= piso(k * x + b)
-int count_lattices(double k, double b, long long n) {
-    auto fk = floor(k);
-    auto fb = floor(b);
-    auto cnt = 0LL;
-    if (k > 1 - EPS || b > 1 -EPS) {
-        cnt += (fk * (n - 1) + 2 * fb) * n / 2;
-        k -= fk;
-        b -= fb;
-    }
-    auto t = k * n + b;
-    auto ft = floor(t);
-    if (ft > 1 - EPS) {
-        cnt += count_lattices(1 / k, (t - floor(t)) / k, floor(t));
-    }
-    return cnt;
-}
-pair<double, double> kb(point a, point b)
-{
-	return mp((b.y - a.y) / (b.x - a.x), (a.y * b.x - a.x * b.y) / (b.x - a.x));
-}
-
-// # of lattice points s.t. ax+by<=c, x,y>0 (a,b is positive integer)
-ll f(ll a, ll b, ll c){
-	if(c<=0) return 0;
-	if(a<b) swap(a, b);
-	ll m=c/a;
-	if(a==b) return m*(m-1)/2;
-	ll k=(a-1)/b, h=(c-a*m)/b;
-	return f(b,a-b*k,c-b*(k*m+h))+k*m*(m-1)/2+m*h;
-}
- 
-// # of lattice points s.t. ax+by<=c, 0<x<=X, 0<y<=Y (a,b is positive integer)
-ll g(ll a, ll b, ll c, ll X, ll Y){
-	if(a*X+b*Y<=c) return X*Y;
-	return f(a,b,c)-f(a,b,c-a*X)-f(a,b,c-b*Y)+f(a,b,c-a*X-b*Y);
-}\end{lstlisting}
-
-\subsection{\texttt{lcs}}
-\begin{lstlisting}
-int longestCommonSubsequence(string text1, string text2) {
-	int n = text1.size(), m = text2.size();
-	vector<vector<int>> lcs(n+1, vector<int>(m+1));
-	for(int i = 1; i <= n; i++)
-	for(int j = 1; j <= m; j++)
-	{
-		lcs[i][j] = max(lcs[i - 1][j], lcs[i][j - 1]);
-		if(text1[i - 1] == text2[j - 1])
-			lcs[i][j] = max(lcs[i][j], lcs[i - 1][j - 1] + 1);
-	}
-	return lcs[n][m];
-}\end{lstlisting}
-
 \subsection{\texttt{linearsieve}}
 \begin{lstlisting}
 std::vector <int> prime;
@@ -833,157 +184,131 @@ void sieve (int n) {
 // From the analysis above, we can see that the inner loop is executed only once for each composite. 
 // Hence, the code above performs in O(n) complexity, resulting in its name - the 'linear' sieve.\end{lstlisting}
 
-\subsection{\texttt{lis}}
+\subsection{\texttt{matrizFibo}}
 \begin{lstlisting}
-// Longest Increasing Subsequence - O(nlogn)
-//
-// dp(i) = max j<i { dp(j) | a[j] < a[i] } + 1
-//
+#include <bits/stdc++.h>
+using namespace std;
 
-// int dp[N], v[N], n, lis;
+typedef long long ll;
+const ll MOD = 1'000'000'007;
 
-memset(dp, 63, sizeof dp);
-for (int i = 0; i < n; ++i) {
-  // increasing: lower_bound
-  // non-decreasing: upper_bound
-  int j = lower_bound(dp, dp + lis, v[i]) - dp;
-  dp[j] = min(dp[j], v[i]);
-  lis = max(lis, j + 1);
-}\end{lstlisting}
-
-\subsection{\texttt{nearestVecino}}
-\begin{lstlisting}
-// Closest Neighbor - O(n * log(n))
-const ll N = 1e6+3, INF = 1e18;
-ll n, cn[N], x[N], y[N]; // number of points, closes neighbor, x coordinates, y coordinates
-
-ll sqr(ll i) { return i*i; }
-ll dist(int i, int j) { return sqr(x[i]-x[j]) + sqr(y[i]-y[j]); }
-ll dist(int i) { return i == cn[i] ? INF : dist(i, cn[i]); }
-
-bool cpx(int i, int j) { return x[i] < x[j] or (x[i] == x[j] and y[i] < y[j]); }
-bool cpy(int i, int j) { return y[i] < y[j] or (y[i] == y[j] and x[i] < x[j]); }
-
-ll calc(int i, ll x0) {
-  ll dlt = dist(i) - sqr(x[i]-x0);
-  return dlt >= 0 ? ceil(sqrt(dlt)) : -1;
-}
-
-void updt(int i, int j, ll x0, ll &dlt) {
-  if (dist(i) > dist(i, j)) cn[i] = j, dlt = calc(i, x0);
-}
-
-void cmp(vi &u, vi &v, ll x0) {
-  for(int a=0, b=0; a<u.size(); ++a) {
-    ll i = u[a], dlt = calc(i, x0);
-    while(b < v.size() and y[i] > y[v[b]]) b++;
-    for(int j = b-1; j >= 0     and y[i] - dlt <= y[v[j]]; j--) updt(i, v[j], x0, dlt);
-    for(int j = b; j < v.size() and y[i] + dlt >= y[v[j]]; j++) updt(i, v[j], x0, dlt);
-  }
-}
-
-void slv(vi &ix, vi &iy) {
-  int n = ix.size();
-  if (n == 1) { cn[ix[0]] = ix[0]; return; }
-
-  int m = ix[n/2];
-
-  vi ix1, ix2, iy1, iy2;
-  for(int i=0; i<n; ++i) {
-    if (cpx(ix[i], m)) ix1.push_back(ix[i]);
-    else ix2.push_back(ix[i]);
-
-    if (cpx(iy[i], m)) iy1.push_back(iy[i]);
-    else iy2.push_back(iy[i]);
-  }
-
-  slv(ix1, iy1);
-  slv(ix2, iy2);
-
-  cmp(iy1, iy2, x[m]);
-  cmp(iy2, iy1, x[m]);
-}
-
-void slv(int n) {
-  vi ix, iy;
-  ix.resize(n);
-  iy.resize(n);
-  for(int i=0; i<n; ++i) ix[i] = iy[i] = i;
-  sort(ix.begin(), ix.end(), cpx);
-  sort(iy.begin(), iy.end(), cpy);
-  slv(ix, iy);
-}\end{lstlisting}
-
-\subsection{\texttt{pointintpoligon}}
-\begin{lstlisting}
-struct pt {
-    long long x, y;
-    pt() {}
-    pt(long long _x, long long _y) : x(_x), y(_y) {}
-    pt operator+(const pt &p) const { return pt(x + p.x, y + p.y); }
-    pt operator-(const pt &p) const { return pt(x - p.x, y - p.y); }
-    long long cross(const pt &p) const { return x * p.y - y * p.x; }
-    long long dot(const pt &p) const { return x * p.x + y * p.y; }
-    long long cross(const pt &a, const pt &b) const { return (a - *this).cross(b - *this); }
-    long long dot(const pt &a, const pt &b) const { return (a - *this).dot(b - *this); }
-    long long sqrLen() const { return this->dot(*this); }
+struct Matrix {
+    ll mat[2][2];
 };
 
-bool lexComp(const pt &l, const pt &r) {
-    return l.x < r.x || (l.x == r.x && l.y < r.y);
+Matrix operator*(const Matrix &a, const Matrix &b){
+    Matrix c{};
+    for (int i = 0; i < 2; i++)
+        for (int j = 0; j < 2; j++) {
+            __int128 tmp = 0;
+            for (int k = 0; k < 2; k++)
+                tmp += (__int128)a.mat[i][k] * b.mat[k][j];
+            c.mat[i][j] = (ll)(tmp % MOD);
+        }
+    return c;
 }
 
-int sgn(long long val) { return val > 0 ? 1 : (val == 0 ? 0 : -1); }
-
-vector<pt> seq;
-pt translation;
-int n;
-
-bool pointInTriangle(pt a, pt b, pt c, pt point) {
-    long long s1 = abs(a.cross(b, c));
-    long long s2 = abs(point.cross(a, b)) + abs(point.cross(b, c)) + abs(point.cross(c, a));
-    return s1 == s2;
-}
-
-void prepare(vector<pt> &points) {
-    n = points.size();
-    int pos = 0;
-    for (int i = 1; i < n; i++) {
-        if (lexComp(points[i], points[pos]))
-            pos = i;
+Matrix matpow(Matrix base, ll n) {
+    Matrix ans{{ {1, 0}, {0, 1} }};
+    while (n) {
+        if (n & 1) ans = ans * base;
+        base = base * base;
+        n >>= 1;
     }
-    rotate(points.begin(), points.begin() + pos, points.end());
+    return ans;
+}
 
-    n--;
-    seq.resize(n);
+ll fib(ll n) {
+    if (n == 0) return 0;
+    Matrix base{{ {1,1}, {1,0} }};
+    return matpow(base, n).mat[0][1];
+}
+
+int main(){
+    ll n;
+    cin >> n;
+    cout << fib(n) << "\n";
+}
+\end{lstlisting}
+
+\subsection{\texttt{multiply}}
+\begin{lstlisting}
+vector<int> multiply(vector<int> const& a, vector<int> const& b) {
+    vector<cd> fa(a.begin(), a.end()), fb(b.begin(), b.end());
+    int n = 1;
+    while (n < a.size() + b.size()) 
+        n <<= 1;
+    fa.resize(n);
+    fb.resize(n);
+
+    fft(fa, false);
+    fft(fb, false);
     for (int i = 0; i < n; i++)
-        seq[i] = points[i + 1] - points[0];
-    translation = points[0];
-}
+        fa[i] *= fb[i];
+    fft(fa, true);
+    // For nnt just return fa
+    // and apply MOD to fa[i]
+    // If you want return result
+    // Clean the right zeros
+    vector<int> result(n);
+    for (int i = 0; i < n; i++)
+        result[i] = round(fa[i].real());
+    
+    return result;
+}\end{lstlisting}
 
-bool pointInConvexPolygon(pt point) {
-    point = point - translation;
-    if (seq[0].cross(point) != 0 &&
-            sgn(seq[0].cross(point)) != sgn(seq[0].cross(seq[n - 1])))
-        return false;
-    if (seq[n - 1].cross(point) != 0 &&
-            sgn(seq[n - 1].cross(point)) != sgn(seq[n - 1].cross(seq[0])))
-        return false;
+\subsection{\texttt{ntt}}
+\begin{lstlisting}
+const int mod = 7340033;
+const int root = 5;
+const int root_1 = 4404020;
+const int root_pw = 1 << 20;
+/*
+    const int mod = 998244353;
+    const int root = 31;
+    const int root_1 = 128805723;
+    const int root_pw = 1 << 23;
 
-    if (seq[0].cross(point) == 0)
-        return seq[0].sqrLen() >= point.sqrLen();
+    const int mod = 1004535809;
+    const int root = 12289;
+    const int root_1 = 313564925;
+    const int root_pw = 1 << 21;
 
-    int l = 0, r = n - 1;
-    while (r - l > 1) {
-        int mid = (l + r) / 2;
-        int pos = mid;
-        if (seq[pos].cross(point) >= 0)
-            l = mid;
-        else
-            r = mid;
+    const int mod = 469762049;
+    const int root = 2187;
+    const int root_1 = 410692747;
+    const int root_pw = 1 << 26;
+*/
+void fft(vector<int> & a, bool invert) {
+    int n = a.size();
+    for (int i = 1, j = 0; i < n; i++) {
+        int bit = n >> 1;
+        for (; j & bit; bit>>=1) j ^= bit;
+        j ^= bit;
+
+        if(i<j) swap(a[i], a[j]);
     }
-    int pos = l;
-    return pointInTriangle(seq[pos], seq[pos + 1], pt(0, 0), point);
+
+    for (int len = 2; len <= n; len <<= 1) {
+        int wlen = invert ? root_1 : root;
+        for (int i = len; i < root_pw; i <<= 1)
+            wlen = (int)(1LL * wlen * wlen % mod);
+
+        for (int i = 0; i < n; i += len) {
+            int w = 1;
+            for (int j = 0; j < len / 2; j++) {
+                int u = a[i+j], v = (int)(1LL * a[i+j+len/2] * w % mod);
+                a[i+j] = u + v < mod ? u + v : u + v - mod;
+                a[i+j+len/2] = u - v >= 0 ? u - v : u - v + mod;
+                w = (int)(1LL * w * wlen % mod);
+            }
+        }
+    }
+    if (invert) {
+        int n_1 = inverse(n, mod);
+        for (int & x : a)
+            x = (int)(1LL * x * n_1 % mod);
+    }
 }\end{lstlisting}
 
 \subsection{\texttt{starsandbars}}
@@ -997,487 +322,6 @@ bool pointInConvexPolygon(pt point) {
  * 
  */\end{lstlisting}
 
-\subsection{\texttt{suffixarray}}
-\begin{lstlisting}
-vector<int> suffixa(string &s){
-  int n = s.size(), cc, ax;
-  vector<int> sa(n), sa1(n), col(n), col1(n), head(n);
-  fore(i, 0, n) sa[i] = i;
-  auto cmp = [&](int a, int b){ return s[a] < s[b]; };
-  stable_sort(sa.begin(), sa.end(), cmp);
-  head[0] = col[sa[0]] = cc = 0;
-  fore(i, 1, n){
-    if(s[sa[i]] != s[sa[i-1]])
-      cc++, head[cc] = i;
-    col[sa[i]] = cc;
-  }
-  for(int k = 1; k < n; k *= 2){
-    fore(i, 0, n){
-      ax = (sa[i] - k + n) % n;
-      sa1[head[col[ax]]++] = ax;
-    }
-    swap(sa, sa1);
-    col1[sa[0]] = head[0] = cc = 0;
-    fore(i, 1, n){
-      if(col[sa[i]] != col[sa[i - 1]] || col[(sa[i] + k) % n] != col[(sa[i - 1] + k) % n])
-        cc++, head[cc] = i;
-      col1[sa[i]] = cc;
-    }
-    swap(col, col1); 
-    if(col[sa[n - 1]] == n - 1) break;
-  }
-  return sa;
-}
-vector<int> lcp(string &s, vector<int> &sa){
-  int n = s.size(), k, z = 0;
-  vector<int> sa1(n), lcp(n);
-  fore(i, 0, n) sa1[sa[i]] = i;
-  fore(i, 0, n){
-    k = sa1[i];
-    if(k < n - 1)
-      while(s[i + z] == s[sa[k+1] + z])
-        z++;
-    lcp[k] = z; z = max(z-1, 0ll);
-  }
-  return lcp;
-}\end{lstlisting}
-
-\subsection{\texttt{trie}}
-\begin{lstlisting}
-#include <bits/stdc++.h>
-using namespace std;
-
-struct Trie {
-    static constexpr int ALPHABET = 26;
-
-    struct Node {
-        int next[ALPHABET];
-        int prefixCount;
-        int wordCount;
-
-        Node() {
-            fill(next, next + ALPHABET, -1);
-            prefixCount = 0;
-            wordCount = 0;
-        }
-    };
-
-    vector<Node> trie;
-
-    Trie(int maxNodes = 1) {
-        trie.reserve(maxNodes);
-        trie.emplace_back(); // Nodo 0: raiz
-    }
-
-    // Reinicia completamente el Trie
-    void clear() {
-        trie.clear();
-        trie.emplace_back();
-    }
-
-    // Crea un nuevo nodo y devuelve su indice
-    int newNode() {
-        trie.emplace_back();
-        return (int)trie.size() - 1;
-    }
-
-    // Inserta una palabra
-    // Supone que contiene solamente letras entre 'a' y 'z'
-    void insert(const string& word) {
-        int node = 0;
-        trie[node].prefixCount++;
-
-        for (char ch : word) {
-            int c = ch - 'a';
-
-            if (trie[node].next[c] == -1) {
-                trie[node].next[c] = newNode();
-            }
-
-            node = trie[node].next[c];
-            trie[node].prefixCount++;
-        }
-
-        trie[node].wordCount++;
-    }
-
-    // Devuelve el nodo donde termina la cadena
-    // Devuelve -1 si la cadena no existe como camino en el Trie
-    int findNode(const string& word) const {
-        int node = 0;
-
-        for (char ch : word) {
-            int c = ch - 'a';
-
-            if (c < 0 || c >= ALPHABET)
-                return -1;
-
-            if (trie[node].next[c] == -1)
-                return -1;
-
-            node = trie[node].next[c];
-        }
-
-        return node;
-    }
-
-    // Devuelve cuantas veces se inserto exactamente una palabra
-    int countWord(const string& word) const {
-        int node = findNode(word);
-
-        if (node == -1)
-            return 0;
-
-        return trie[node].wordCount;
-    }
-
-    // Indica si una palabra fue insertada al menos una vez
-    bool contains(const string& word) const {
-        return countWord(word) > 0;
-    }
-
-    // Devuelve cuantas palabras insertadas comienzan con prefix
-    int countPrefix(const string& prefix) const {
-        int node = findNode(prefix);
-
-        if (node == -1)
-            return 0;
-
-        return trie[node].prefixCount;
-    }
-
-    // Elimina una aparicion de la palabra
-    // Devuelve false si la palabra no estaba insertada
-    bool erase(const string& word) {
-        if (!contains(word))
-            return false;
-
-        int node = 0;
-        trie[node].prefixCount--;
-
-        for (char ch : word) {
-            int c = ch - 'a';
-            node = trie[node].next[c];
-            trie[node].prefixCount--;
-        }
-
-        trie[node].wordCount--;
-        return true;
-    }
-
-    // Devuelve la cantidad de nodos utilizados
-    int size() const {
-        return (int)trie.size();
-    }
-};
-\end{lstlisting}
-
-\subsection{\texttt{trie2}}
-\begin{lstlisting}
-const int K = 26;
-
-struct Vertex {
-    int next[K];
-    bool output = false;
-
-    Vertex() {
-        fill(begin(next), end(next), -1);
-    }
-};
-
-vector<Vertex> trie(1);
-
-void add_string(string const& s) {
-    int v = 0;
-    for (char ch : s) {
-        int c = ch - 'a';
-        if (trie[v].next[c] == -1) {
-            trie[v].next[c] = trie.size();
-            trie.emplace_back();
-        }
-        v = trie[v].next[c];
-    }
-    trie[v].output = true;
-}
-\end{lstlisting}
-
-\subsection{\texttt{twoSegmentIntersec}}
-\begin{lstlisting}
-struct pt {
-    long long x, y;
-    pt() {}
-    pt(long long _x, long long _y) : x(_x), y(_y) {}
-    pt operator-(const pt& p) const { return pt(x - p.x, y - p.y); }
-    long long cross(const pt& p) const { return x * p.y - y * p.x; }
-    long long cross(const pt& a, const pt& b) const { return (a - *this).cross(b - *this); }
-};
-
-int sgn(const long long& x) { return x >= 0 ? x ? 1 : 0 : -1; }
-
-bool inter1(long long a, long long b, long long c, long long d) {
-    if (a > b)
-        swap(a, b);
-    if (c > d)
-        swap(c, d);
-    return max(a, c) <= min(b, d);
-}
-
-bool check_inter(const pt& a, const pt& b, const pt& c, const pt& d) {
-    if (c.cross(a, d) == 0 && c.cross(b, d) == 0)
-        return inter1(a.x, b.x, c.x, d.x) && inter1(a.y, b.y, c.y, d.y);
-    return sgn(a.cross(b, c)) != sgn(a.cross(b, d)) &&
-           sgn(c.cross(d, a)) != sgn(c.cross(d, b));
-}\end{lstlisting}
-
-\section{Updates}
-
-\subsection{\texttt{2-sat}}
-\begin{lstlisting}
-struct TwoSatSolver {
-    int n_vars;
-    int n_vertices;
-    vector<vector<int>> adj, adj_t;
-    vector<bool> used;
-    vector<int> order, comp;
-    vector<bool> assignment;
-
-    TwoSatSolver(int _n_vars) : n_vars(_n_vars), n_vertices(2 * n_vars), adj(n_vertices), adj_t(n_vertices), used(n_vertices), order(), comp(n_vertices, -1), assignment(n_vars) {
-        order.reserve(n_vertices);
-    }
-    void dfs1(int v) {
-        used[v] = true;
-        for (int u : adj[v]) {
-            if (!used[u])
-                dfs1(u);
-        }
-        order.push_back(v);
-    }
-
-    void dfs2(int v, int cl) {
-        comp[v] = cl;
-        for (int u : adj_t[v]) {
-            if (comp[u] == -1)
-                dfs2(u, cl);
-        }
-    }
-
-    bool solve_2SAT() {
-        order.clear();
-        used.assign(n_vertices, false);
-        for (int i = 0; i < n_vertices; ++i) {
-            if (!used[i])
-                dfs1(i);
-        }
-
-        comp.assign(n_vertices, -1);
-        for (int i = 0, j = 0; i < n_vertices; ++i) {
-            int v = order[n_vertices - i - 1];
-            if (comp[v] == -1)
-                dfs2(v, j++);
-        }
-
-        assignment.assign(n_vars, false);
-        for (int i = 0; i < n_vertices; i += 2) {
-            if (comp[i] == comp[i + 1])
-                return false;
-            assignment[i / 2] = comp[i] > comp[i + 1];
-        }
-        return true;
-    }
-
-    void add_disjunction(int a, bool na, int b, bool nb) {
-        // na and nb signify whether a and b are to be negated 
-        a = 2 * a ^ na;
-        b = 2 * b ^ nb;
-        int neg_a = a ^ 1;
-        int neg_b = b ^ 1;
-        adj[neg_a].push_back(b);
-        adj[neg_b].push_back(a);
-        adj_t[b].push_back(neg_a);
-        adj_t[a].push_back(neg_b);
-    }
-
-    static void example_usage() {
-        TwoSatSolver solver(3); // a, b, c
-        solver.add_disjunction(0, false, 1, true);  //     a  v  not b
-        solver.add_disjunction(0, true, 1, true);   // not a  v  not b
-        solver.add_disjunction(1, false, 2, false); //     b  v      c
-        solver.add_disjunction(0, false, 0, false); //     a  v      a
-        assert(solver.solve_2SAT() == true);
-        auto expected = vector<bool>(True, False, True);
-        assert(solver.assignment == expected);
-    }
-};\end{lstlisting}
-
-\subsection{\texttt{ahocorasick}}
-\begin{lstlisting}
-const int K = 26;
-
-struct Vertex {
-    int next[K];
-    bool output = false;
-    int p = -1;
-    char pch;
-    int link = -1;
-    int go[K];
-
-    Vertex(int p=-1, char ch='$') : p(p), pch(ch) {
-        fill(begin(next), end(next), -1);
-        fill(begin(go), end(go), -1);
-    }
-};
-
-vector<Vertex> t(1);
-
-void add_string(string const& s) {
-    int v = 0;
-    for (char ch : s) {
-        int c = ch - 'a';
-        if (t[v].next[c] == -1) {
-            t[v].next[c] = t.size();
-            t.emplace_back(v, ch);
-        }
-        v = t[v].next[c];
-    }
-    t[v].output = true;
-}
-
-int go(int v, char ch);
-
-int get_link(int v) {
-    if (t[v].link == -1) {
-        if (v == 0 || t[v].p == 0)
-            t[v].link = 0;
-        else
-            t[v].link = go(get_link(t[v].p), t[v].pch);
-    }
-    return t[v].link;
-}
-
-int go(int v, char ch) {
-    int c = ch - 'a';
-    if (t[v].go[c] == -1) {
-        if (t[v].next[c] != -1)
-            t[v].go[c] = t[v].next[c];
-        else
-            t[v].go[c] = v == 0 ? 0 : go(get_link(v), ch);
-    }
-    return t[v].go[c];
-}\end{lstlisting}
-
-\subsection{\texttt{componentes\_fuertemente\_conexos}}
-\begin{lstlisting}
-#include <bits/stdc++.h>
-
-const int N = 1e5 + 1;
-
-// adj_t is the transpose of adj
-std::vector<int> adj[N], adj_t[N];
-std::vector<int> order;
-std::vector<int> vis(N), id(N);
-
-// calculates the order in which nodes are processed
-void dfs1(int v) {
-	vis[v] = true;
-	for (int u : adj[v]) {
-		if (!vis[u]) { dfs1(u); }
-	}
-	order.push_back(v);
-}
-
-/*
- * traverse one SCC at a time and
- * assign component ID to all nodes in one SCC
- */
-void dfs2(int x, int comp) {
-	vis[x] = true;
-
-	for (int u : adj_t[x]) {
-		if (!vis[u]) { dfs2(u, comp); }
-	}
-	id[x] = comp;
-}
-
-int main() {
-	int n, m;
-	std::cin >> n >> m;
-
-	for (int i = 1; i <= m; i++) {
-		int u, v;
-		std::cin >> u >> v;
-		adj[u].push_back(v);
-		adj_t[v].push_back(u);
-	}
-
-	vis.assign(N, false);
-
-	for (int i = 1; i <= n; i++) {
-		if (!vis[i]) { dfs1(i); }
-	}
-
-	vis.assign(N, false);
-	std::reverse(begin(order), end(order));
-	int comps = 0;
-	for (int v : order) {
-		if (!vis[v]) {
-			comps++;  // counter for SCC
-			dfs2(v, comps);
-		}
-	}
-
-	std::cout << comps << '\n';
-
-	for (int i = 1; i <= n; i++) { std::cout << id[i] << " \n"[i == n]; }
-}\end{lstlisting}
-
-\subsection{\texttt{floyd\_warshall}}
-\begin{lstlisting}
-for (int k = 0; k < n; ++k) {
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            if (d[i][k] < INF && d[k][j] < INF)
-                d[i][j] = min(d[i][j], d[i][k] + d[k][j]); 
-        }
-    }
-}\end{lstlisting}
-
-\subsection{\texttt{lazy}}
-\begin{lstlisting}
-struct SegmentTreeLazy
-{
-    void push(int nodo,int l_n, int r_n){
-        
-        /**
-         * 1.Aplicar lazy del padre(nodo) a los hijos
-         * 2.marcar el lazy a los hijos
-         * 3.matar el lazy del padre */ 
-            
-    }
- 
-    long long query(int nodo, int l_n,int r_n,int l_q,int r_q){
-        if(l_q<=l_n and r_n<=r_q) return st[nodo].sc;
-        if(l_q>r_n or l_n>r_q) return 0;
-        push(nodo,l_n,r_n);
-        int m=(l_n+r_n)>>1;
-        return (long long)((query(2*nodo,l_n,m,l_q,r_q)+query(2*nodo+1,m+1,r_n,l_q,r_q)));
-    }
-    void update(int nodo, int l_n,int r_n,int l_q,int r_q,ll val){
-        if(l_q>r_n or l_n>r_q) return;
-        if(l_q<=l_n and r_n<=r_q){
-            //aplicar el lazy, osea si fuera suma sumarlo al nodo y guardar el lazy
-            st[nodo].lazy_x+=val;
-            return;
-        }
-        else{
-            push(nodo,l_n,r_n);
-            int m=(l_n+r_n)/2;
-            update(2*nodo,l_n,m,l_q,r_q,val);
-            update(2*nodo+1,m+1,r_n,l_q,r_q,val);
-            st[nodo]=st[nodo*2]+st[nodo*2+1];
-        }
-    }
-};\end{lstlisting}
-
 \section{Bits}
 
 \subsection{\texttt{SoSDP}}
@@ -1488,6 +332,18 @@ for(int i = 0;i < N; ++i){
     for(int mask = 0; mask < (1<<N); ++mask){
         if(mask & (1<<i))ans[mask] += ans[mask^(1<<i)];
     }
+}\end{lstlisting}
+
+\subsection{\texttt{gray}}
+\begin{lstlisting}
+int g (int n) {
+    return n ^ (n >> 1);
+}
+int rev_g (int g) {
+  int n = 0;
+  for (; g; g >>= 1)
+    n ^= g;
+  return n;
 }\end{lstlisting}
 
 \section{Miscelanea}
@@ -2017,6 +873,43 @@ struct Bit
 };
 \end{lstlisting}
 
+\subsection{\texttt{lazy}}
+\begin{lstlisting}
+struct SegmentTreeLazy
+{
+    void push(int nodo,int l_n, int r_n){
+        
+        /**
+         * 1.Aplicar lazy del padre(nodo) a los hijos
+         * 2.marcar el lazy a los hijos
+         * 3.matar el lazy del padre */ 
+            
+    }
+ 
+    long long query(int nodo, int l_n,int r_n,int l_q,int r_q){
+        if(l_q<=l_n and r_n<=r_q) return st[nodo].sc;
+        if(l_q>r_n or l_n>r_q) return 0;
+        push(nodo,l_n,r_n);
+        int m=(l_n+r_n)>>1;
+        return (long long)((query(2*nodo,l_n,m,l_q,r_q)+query(2*nodo+1,m+1,r_n,l_q,r_q)));
+    }
+    void update(int nodo, int l_n,int r_n,int l_q,int r_q,ll val){
+        if(l_q>r_n or l_n>r_q) return;
+        if(l_q<=l_n and r_n<=r_q){
+            //aplicar el lazy, osea si fuera suma sumarlo al nodo y guardar el lazy
+            st[nodo].lazy_x+=val;
+            return;
+        }
+        else{
+            push(nodo,l_n,r_n);
+            int m=(l_n+r_n)/2;
+            update(2*nodo,l_n,m,l_q,r_q,val);
+            update(2*nodo+1,m+1,r_n,l_q,r_q,val);
+            st[nodo]=st[nodo*2]+st[nodo*2+1];
+        }
+    }
+};\end{lstlisting}
+
 \subsection{\texttt{sqrt}}
 \begin{lstlisting}
 struct Sqrt
@@ -2154,6 +1047,281 @@ inline void solve()
     vector<int> vec = prefix_function(sub + "$" + texto);
     cout << count(vec.begin(), vec.end(), m) << endl;
 }\end{lstlisting}
+
+\subsection{\texttt{ahocorasick}}
+\begin{lstlisting}
+#include <bits/stdc++.h>
+using namespace std;
+
+struct AhoCorasick {
+    static constexpr int ALPHA = 26;
+    static constexpr char BASE = 'a';
+
+    struct Node {
+        array<int, ALPHA> next;
+        int link;
+        int outputLink;
+        vector<int> output;
+
+        // Complejidad: O(ALPHA)
+        Node() : link(0), outputLink(-1) {
+            next.fill(-1);
+        }
+    };
+
+    vector<Node> trie;
+    vector<int> patternLength;
+    bool built;
+
+    // Complejidad: O(ALPHA)
+    AhoCorasick() {
+        init();
+    }
+
+    // Reinicia toda la estructura.
+    // Complejidad: O(total de nodos)
+    void init() {
+        trie.clear();
+        trie.emplace_back();
+        patternLength.clear();
+        built = false;
+    }
+
+    // Convierte un caracter valido en su indice.
+    // Complejidad: O(1)
+    int charId(char c) const {
+        return c - BASE;
+    }
+
+    // Verifica si el caracter pertenece al alfabeto.
+    // Complejidad: O(1)
+    bool validChar(char c) const {
+        int id = charId(c);
+        return 0 <= id && id < ALPHA;
+    }
+
+    // Agrega un patron y retorna su identificador.
+    // Los identificadores se asignan desde cero.
+    // Complejidad: O(longitud del patron)
+    int addPattern(const string& pattern) {
+        int patternId = (int)patternLength.size();
+        patternLength.push_back((int)pattern.size());
+
+        int node = 0;
+
+        for (char c : pattern) {
+            int id = charId(c);
+
+            assert(0 <= id && id < ALPHA);
+
+            if (trie[node].next[id] == -1) {
+                trie[node].next[id] = (int)trie.size();
+                trie.emplace_back();
+            }
+
+            node = trie[node].next[id];
+        }
+
+        trie[node].output.push_back(patternId);
+        built = false;
+
+        return patternId;
+    }
+
+    // Construye failure links, output links y transiciones completas.
+    // Debe ejecutarse despues de agregar todos los patrones.
+    // Complejidad: O(numero de nodos * ALPHA)
+    void build() {
+        queue<int> q;
+
+        trie[0].link = 0;
+        trie[0].outputLink = -1;
+
+        for (int c = 0; c < ALPHA; ++c) {
+            int child = trie[0].next[c];
+
+            if (child == -1) {
+                trie[0].next[c] = 0;
+            } else {
+                trie[child].link = 0;
+                trie[child].outputLink = trie[0].output.empty() ? -1 : 0;
+                q.push(child);
+            }
+        }
+
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
+
+            for (int c = 0; c < ALPHA; ++c) {
+                int child = trie[node].next[c];
+
+                if (child == -1) {
+                    trie[node].next[c] = trie[trie[node].link].next[c];
+                    continue;
+                }
+
+                int failure = trie[trie[node].link].next[c];
+                trie[child].link = failure;
+
+                if (!trie[failure].output.empty()) {
+                    trie[child].outputLink = failure;
+                } else {
+                    trie[child].outputLink = trie[failure].outputLink;
+                }
+
+                q.push(child);
+            }
+        }
+
+        built = true;
+    }
+
+    // Retorna el siguiente estado al procesar un caracter.
+    // Requiere que build haya sido ejecutado.
+    // Complejidad: O(1)
+    int advance(int state, char c) const {
+        assert(built);
+
+        if (!validChar(c)) {
+            return 0;
+        }
+
+        return trie[state].next[charId(c)];
+    }
+
+    // Ejecuta una funcion para cada patron que termina en el estado actual.
+    // callback recibe patternId.
+    // Complejidad: O(numero de coincidencias reportadas + cadena de outputs)
+    template <class Callback>
+    void forEachOutput(int state, Callback callback) const {
+        for (int node = state; node != -1; node = trie[node].outputLink) {
+            for (int patternId : trie[node].output) {
+                callback(patternId);
+            }
+        }
+    }
+
+    // Retorna todas las coincidencias como pares:
+    // {posicion inicial, patternId}.
+    // Complejidad: O(longitud del texto + numero de coincidencias)
+    vector<pair<int, int>> findAll(const string& text) const {
+        assert(built);
+
+        vector<pair<int, int>> matches;
+        int state = 0;
+
+        for (int i = 0; i < (int)text.size(); ++i) {
+            state = advance(state, text[i]);
+
+            forEachOutput(state, int patternId {
+                int start = i - patternLength[patternId] + 1;
+                matches.push_back({start, patternId});
+            });
+        }
+
+        return matches;
+    }
+
+    // Retorna cuantas veces aparece cada patron en el texto.
+    // Cuenta apariciones superpuestas.
+    // Complejidad: O(longitud del texto + numero de coincidencias)
+    vector<long long> countOccurrences(const string& text) const {
+        assert(built);
+
+        vector<long long> count(patternLength.size(), 0);
+        int state = 0;
+
+        for (char c : text) {
+            state = advance(state, c);
+
+            forEachOutput(state, int patternId {
+                ++count[patternId];
+            });
+        }
+
+        return count;
+    }
+
+    // Retorna la primera posicion de cada patron.
+    // Retorna -1 para patrones que no aparecen.
+    // Complejidad: O(longitud del texto + numero de coincidencias)
+    vector<int> firstOccurrence(const string& text) const {
+        assert(built);
+
+        vector<int> first(patternLength.size(), -1);
+        int state = 0;
+
+        for (int i = 0; i < (int)text.size(); ++i) {
+            state = advance(state, text[i]);
+
+            forEachOutput(state, int patternId {
+                if (first[patternId] == -1) {
+                    first[patternId] = i - patternLength[patternId] + 1;
+                }
+            });
+        }
+
+        return first;
+    }
+
+    // Verifica si al menos un patron aparece en el texto.
+    // Complejidad: O(longitud del texto) en el peor caso
+    bool containsAny(const string& text) const {
+        assert(built);
+
+        int state = 0;
+
+        for (char c : text) {
+            state = advance(state, c);
+
+            if (!trie[state].output.empty() || trie[state].outputLink != -1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Verifica si un patron especifico aparece en el texto.
+    // Complejidad: O(longitud del texto + numero de coincidencias)
+    bool containsPattern(const string& text, int targetId) const {
+        assert(built);
+        assert(0 <= targetId && targetId < (int)patternLength.size());
+
+        int state = 0;
+
+        for (char c : text) {
+            state = advance(state, c);
+
+            bool found = false;
+
+            forEachOutput(state, int patternId {
+                if (patternId == targetId) {
+                    found = true;
+                }
+            });
+
+            if (found) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Retorna la cantidad de nodos del automata.
+    // Complejidad: O(1)
+    int nodeCount() const {
+        return (int)trie.size();
+    }
+
+    // Retorna la cantidad de patrones agregados.
+    // Complejidad: O(1)
+    int patternCount() const {
+        return (int)patternLength.size();
+    }
+};\end{lstlisting}
 
 \subsection{\texttt{hashing}}
 \begin{lstlisting}
@@ -2336,6 +1504,21 @@ struct StrHash {
     }
 };\end{lstlisting}
 
+\subsection{\texttt{lcs}}
+\begin{lstlisting}
+int longestCommonSubsequence(string text1, string text2) {
+	int n = text1.size(), m = text2.size();
+	vector<vector<int>> lcs(n+1, vector<int>(m+1));
+	for(int i = 1; i <= n; i++)
+	for(int j = 1; j <= m; j++)
+	{
+		lcs[i][j] = max(lcs[i - 1][j], lcs[i][j - 1]);
+		if(text1[i - 1] == text2[j - 1])
+			lcs[i][j] = max(lcs[i][j], lcs[i - 1][j - 1] + 1);
+	}
+	return lcs[n][m];
+}\end{lstlisting}
+
 \subsection{\texttt{manacher}}
 \begin{lstlisting}
 vector<int> manacher_odd(string s) {
@@ -2365,6 +1548,210 @@ vector<int> manacher(string s) {
     auto res = manacher_odd(t + "#");
     return vector<int>(begin(res) + 1, end(res) - 1);
 }\end{lstlisting}
+
+\subsection{\texttt{suffixarray}}
+\begin{lstlisting}
+vector<int> suffixa(string &s){
+  int n = s.size(), cc, ax;
+  vector<int> sa(n), sa1(n), col(n), col1(n), head(n);
+  fore(i, 0, n) sa[i] = i;
+  auto cmp = [&](int a, int b){ return s[a] < s[b]; };
+  stable_sort(sa.begin(), sa.end(), cmp);
+  head[0] = col[sa[0]] = cc = 0;
+  fore(i, 1, n){
+    if(s[sa[i]] != s[sa[i-1]])
+      cc++, head[cc] = i;
+    col[sa[i]] = cc;
+  }
+  for(int k = 1; k < n; k *= 2){
+    fore(i, 0, n){
+      ax = (sa[i] - k + n) % n;
+      sa1[head[col[ax]]++] = ax;
+    }
+    swap(sa, sa1);
+    col1[sa[0]] = head[0] = cc = 0;
+    fore(i, 1, n){
+      if(col[sa[i]] != col[sa[i - 1]] || col[(sa[i] + k) % n] != col[(sa[i - 1] + k) % n])
+        cc++, head[cc] = i;
+      col1[sa[i]] = cc;
+    }
+    swap(col, col1); 
+    if(col[sa[n - 1]] == n - 1) break;
+  }
+  return sa;
+}
+vector<int> lcp(string &s, vector<int> &sa){
+  int n = s.size(), k, z = 0;
+  vector<int> sa1(n), lcp(n);
+  fore(i, 0, n) sa1[sa[i]] = i;
+  fore(i, 0, n){
+    k = sa1[i];
+    if(k < n - 1)
+      while(s[i + z] == s[sa[k+1] + z])
+        z++;
+    lcp[k] = z; z = max(z-1, 0ll);
+  }
+  return lcp;
+}\end{lstlisting}
+
+\subsection{\texttt{trie}}
+\begin{lstlisting}
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Trie {
+    static constexpr int ALPHABET = 26;
+
+    struct Node {
+        int next[ALPHABET];
+        int prefixCount;
+        int wordCount;
+
+        Node() {
+            fill(next, next + ALPHABET, -1);
+            prefixCount = 0;
+            wordCount = 0;
+        }
+    };
+
+    vector<Node> trie;
+
+    Trie(int maxNodes = 1) {
+        trie.reserve(maxNodes);
+        trie.emplace_back(); // Nodo 0: raiz
+    }
+
+    // Reinicia completamente el Trie
+    void clear() {
+        trie.clear();
+        trie.emplace_back();
+    }
+
+    // Crea un nuevo nodo y devuelve su indice
+    int newNode() {
+        trie.emplace_back();
+        return (int)trie.size() - 1;
+    }
+
+    // Inserta una palabra
+    // Supone que contiene solamente letras entre 'a' y 'z'
+    void insert(const string& word) {
+        int node = 0;
+        trie[node].prefixCount++;
+
+        for (char ch : word) {
+            int c = ch - 'a';
+
+            if (trie[node].next[c] == -1) {
+                trie[node].next[c] = newNode();
+            }
+
+            node = trie[node].next[c];
+            trie[node].prefixCount++;
+        }
+
+        trie[node].wordCount++;
+    }
+
+    // Devuelve el nodo donde termina la cadena
+    // Devuelve -1 si la cadena no existe como camino en el Trie
+    int findNode(const string& word) const {
+        int node = 0;
+
+        for (char ch : word) {
+            int c = ch - 'a';
+
+            if (c < 0 || c >= ALPHABET)
+                return -1;
+
+            if (trie[node].next[c] == -1)
+                return -1;
+
+            node = trie[node].next[c];
+        }
+
+        return node;
+    }
+
+    // Devuelve cuantas veces se inserto exactamente una palabra
+    int countWord(const string& word) const {
+        int node = findNode(word);
+
+        if (node == -1)
+            return 0;
+
+        return trie[node].wordCount;
+    }
+
+    // Indica si una palabra fue insertada al menos una vez
+    bool contains(const string& word) const {
+        return countWord(word) > 0;
+    }
+
+    // Devuelve cuantas palabras insertadas comienzan con prefix
+    int countPrefix(const string& prefix) const {
+        int node = findNode(prefix);
+
+        if (node == -1)
+            return 0;
+
+        return trie[node].prefixCount;
+    }
+
+    // Elimina una aparicion de la palabra
+    // Devuelve false si la palabra no estaba insertada
+    bool erase(const string& word) {
+        if (!contains(word))
+            return false;
+
+        int node = 0;
+        trie[node].prefixCount--;
+
+        for (char ch : word) {
+            int c = ch - 'a';
+            node = trie[node].next[c];
+            trie[node].prefixCount--;
+        }
+
+        trie[node].wordCount--;
+        return true;
+    }
+
+    // Devuelve la cantidad de nodos utilizados
+    int size() const {
+        return (int)trie.size();
+    }
+};
+\end{lstlisting}
+
+\subsection{\texttt{trie2}}
+\begin{lstlisting}
+const int K = 26;
+
+struct Vertex {
+    int next[K];
+    bool output = false;
+
+    Vertex() {
+        fill(begin(next), end(next), -1);
+    }
+};
+
+vector<Vertex> trie(1);
+
+void add_string(string const& s) {
+    int v = 0;
+    for (char ch : s) {
+        int c = ch - 'a';
+        if (trie[v].next[c] == -1) {
+            trie[v].next[c] = trie.size();
+            trie.emplace_back();
+        }
+        v = trie[v].next[c];
+    }
+    trie[v].output = true;
+}
+\end{lstlisting}
 
 \subsection{\texttt{zfunction}}
 \begin{lstlisting}
@@ -2608,6 +1995,166 @@ int main()
 
 }\end{lstlisting}
 
+\subsection{\texttt{geometrynotes}}
+\begin{lstlisting}
+/**
+ *
+ *
+ * Paralelas:          ax * by - ay * bx == 0
+ * Perpendiculares:    ax * bx + ay * by == 0
+ *
+ *
+ * Ecuacion punto-pendiente:
+ * y - y1 = m * (x - x1)
+ *
+ * Pendiente:
+ * m = (y2 - y1) / (x2 - x1)
+ *
+ * Si trabajas con pendientes:
+ * m1 == m2       -> paralelas
+ * m1 * m2 == -1  -> perpendiculares
+ *
+ */\end{lstlisting}
+
+\subsection{\texttt{iterativequerysegment}}
+\begin{lstlisting}
+int query(int l, int r)
+{
+    int ans = INT_MIN;
+
+    for(l += n, r += n; l <= r; l >>= 1, r >>= 1)
+    {
+        if(l & 1) ans = max(ans, st[l++]);
+        if(!(r & 1)) ans = max(ans, st[r--]);
+    }
+
+    return ans;
+}\end{lstlisting}
+
+\subsection{\texttt{laticepoint}}
+\begin{lstlisting}
+//calculates number of integer points (x ; y) such for 0 <= x < n and 0 < y <= piso(k * x + b)
+int count_lattices(double k, double b, long long n) {
+    auto fk = floor(k);
+    auto fb = floor(b);
+    auto cnt = 0LL;
+    if (k > 1 - EPS || b > 1 -EPS) {
+        cnt += (fk * (n - 1) + 2 * fb) * n / 2;
+        k -= fk;
+        b -= fb;
+    }
+    auto t = k * n + b;
+    auto ft = floor(t);
+    if (ft > 1 - EPS) {
+        cnt += count_lattices(1 / k, (t - floor(t)) / k, floor(t));
+    }
+    return cnt;
+}
+pair<double, double> kb(point a, point b)
+{
+	return mp((b.y - a.y) / (b.x - a.x), (a.y * b.x - a.x * b.y) / (b.x - a.x));
+}
+
+// # of lattice points s.t. ax+by<=c, x,y>0 (a,b is positive integer)
+ll f(ll a, ll b, ll c){
+	if(c<=0) return 0;
+	if(a<b) swap(a, b);
+	ll m=c/a;
+	if(a==b) return m*(m-1)/2;
+	ll k=(a-1)/b, h=(c-a*m)/b;
+	return f(b,a-b*k,c-b*(k*m+h))+k*m*(m-1)/2+m*h;
+}
+ 
+// # of lattice points s.t. ax+by<=c, 0<x<=X, 0<y<=Y (a,b is positive integer)
+ll g(ll a, ll b, ll c, ll X, ll Y){
+	if(a*X+b*Y<=c) return X*Y;
+	return f(a,b,c)-f(a,b,c-a*X)-f(a,b,c-b*Y)+f(a,b,c-a*X-b*Y);
+}\end{lstlisting}
+
+\subsection{\texttt{nearestVecino}}
+\begin{lstlisting}
+// Closest Neighbor - O(n * log(n))
+const ll N = 1e6+3, INF = 1e18;
+ll n, cn[N], x[N], y[N]; // number of points, closes neighbor, x coordinates, y coordinates
+
+ll sqr(ll i) { return i*i; }
+ll dist(int i, int j) { return sqr(x[i]-x[j]) + sqr(y[i]-y[j]); }
+ll dist(int i) { return i == cn[i] ? INF : dist(i, cn[i]); }
+
+bool cpx(int i, int j) { return x[i] < x[j] or (x[i] == x[j] and y[i] < y[j]); }
+bool cpy(int i, int j) { return y[i] < y[j] or (y[i] == y[j] and x[i] < x[j]); }
+
+ll calc(int i, ll x0) {
+  ll dlt = dist(i) - sqr(x[i]-x0);
+  return dlt >= 0 ? ceil(sqrt(dlt)) : -1;
+}
+
+void updt(int i, int j, ll x0, ll &dlt) {
+  if (dist(i) > dist(i, j)) cn[i] = j, dlt = calc(i, x0);
+}
+
+void cmp(vi &u, vi &v, ll x0) {
+  for(int a=0, b=0; a<u.size(); ++a) {
+    ll i = u[a], dlt = calc(i, x0);
+    while(b < v.size() and y[i] > y[v[b]]) b++;
+    for(int j = b-1; j >= 0     and y[i] - dlt <= y[v[j]]; j--) updt(i, v[j], x0, dlt);
+    for(int j = b; j < v.size() and y[i] + dlt >= y[v[j]]; j++) updt(i, v[j], x0, dlt);
+  }
+}
+
+void slv(vi &ix, vi &iy) {
+  int n = ix.size();
+  if (n == 1) { cn[ix[0]] = ix[0]; return; }
+
+  int m = ix[n/2];
+
+  vi ix1, ix2, iy1, iy2;
+  for(int i=0; i<n; ++i) {
+    if (cpx(ix[i], m)) ix1.push_back(ix[i]);
+    else ix2.push_back(ix[i]);
+
+    if (cpx(iy[i], m)) iy1.push_back(iy[i]);
+    else iy2.push_back(iy[i]);
+  }
+
+  slv(ix1, iy1);
+  slv(ix2, iy2);
+
+  cmp(iy1, iy2, x[m]);
+  cmp(iy2, iy1, x[m]);
+}
+
+void slv(int n) {
+  vi ix, iy;
+  ix.resize(n);
+  iy.resize(n);
+  for(int i=0; i<n; ++i) ix[i] = iy[i] = i;
+  sort(ix.begin(), ix.end(), cpx);
+  sort(iy.begin(), iy.end(), cpy);
+  slv(ix, iy);
+}\end{lstlisting}
+
+\subsection{\texttt{picks\_theorem}}
+\begin{lstlisting}
+struct Point{
+    ll x,y;
+    ll cross(const Point& o) const {return x*o.y-y*o.x;}
+};
+pair<ll,pair<ll,ll>> picks_theorem(vector<Point>&p){
+    ll double_area=0, B=0;
+    int n=p.size();
+    for(int i=0,j=n-1;i<n;j=i++){
+        double_area+=p[j].cross(p[i]);
+        ll dx=abs(p[i].x-p[j].x);
+        ll dy=abs(p[i].y-p[j].y);
+        B+=gcd(dx,dy);
+    }
+    double_area=abs(double_area);
+    ll I=(double_area-B+2)/2;
+    //Real area = double_area/2.0
+    return {double_area,{I,B}};
+}\end{lstlisting}
+
 \subsection{\texttt{pointinpoligon}}
 \begin{lstlisting}
 struct pt {
@@ -2678,6 +2225,106 @@ bool pointInConvexPolygon(pt point) {
     }
     int pos = l;
     return pointInTriangle(seq[pos], seq[pos + 1], pt(0, 0), point);
+}\end{lstlisting}
+
+\subsection{\texttt{pointintpoligon}}
+\begin{lstlisting}
+struct pt {
+    long long x, y;
+    pt() {}
+    pt(long long _x, long long _y) : x(_x), y(_y) {}
+    pt operator+(const pt &p) const { return pt(x + p.x, y + p.y); }
+    pt operator-(const pt &p) const { return pt(x - p.x, y - p.y); }
+    long long cross(const pt &p) const { return x * p.y - y * p.x; }
+    long long dot(const pt &p) const { return x * p.x + y * p.y; }
+    long long cross(const pt &a, const pt &b) const { return (a - *this).cross(b - *this); }
+    long long dot(const pt &a, const pt &b) const { return (a - *this).dot(b - *this); }
+    long long sqrLen() const { return this->dot(*this); }
+};
+
+bool lexComp(const pt &l, const pt &r) {
+    return l.x < r.x || (l.x == r.x && l.y < r.y);
+}
+
+int sgn(long long val) { return val > 0 ? 1 : (val == 0 ? 0 : -1); }
+
+vector<pt> seq;
+pt translation;
+int n;
+
+bool pointInTriangle(pt a, pt b, pt c, pt point) {
+    long long s1 = abs(a.cross(b, c));
+    long long s2 = abs(point.cross(a, b)) + abs(point.cross(b, c)) + abs(point.cross(c, a));
+    return s1 == s2;
+}
+
+void prepare(vector<pt> &points) {
+    n = points.size();
+    int pos = 0;
+    for (int i = 1; i < n; i++) {
+        if (lexComp(points[i], points[pos]))
+            pos = i;
+    }
+    rotate(points.begin(), points.begin() + pos, points.end());
+
+    n--;
+    seq.resize(n);
+    for (int i = 0; i < n; i++)
+        seq[i] = points[i + 1] - points[0];
+    translation = points[0];
+}
+
+bool pointInConvexPolygon(pt point) {
+    point = point - translation;
+    if (seq[0].cross(point) != 0 &&
+            sgn(seq[0].cross(point)) != sgn(seq[0].cross(seq[n - 1])))
+        return false;
+    if (seq[n - 1].cross(point) != 0 &&
+            sgn(seq[n - 1].cross(point)) != sgn(seq[n - 1].cross(seq[0])))
+        return false;
+
+    if (seq[0].cross(point) == 0)
+        return seq[0].sqrLen() >= point.sqrLen();
+
+    int l = 0, r = n - 1;
+    while (r - l > 1) {
+        int mid = (l + r) / 2;
+        int pos = mid;
+        if (seq[pos].cross(point) >= 0)
+            l = mid;
+        else
+            r = mid;
+    }
+    int pos = l;
+    return pointInTriangle(seq[pos], seq[pos + 1], pt(0, 0), point);
+}\end{lstlisting}
+
+\subsection{\texttt{twoSegmentIntersec}}
+\begin{lstlisting}
+struct pt {
+    long long x, y;
+    pt() {}
+    pt(long long _x, long long _y) : x(_x), y(_y) {}
+    pt operator-(const pt& p) const { return pt(x - p.x, y - p.y); }
+    long long cross(const pt& p) const { return x * p.y - y * p.x; }
+    long long cross(const pt& a, const pt& b) const { return (a - *this).cross(b - *this); }
+};
+
+int sgn(const long long& x) { return x >= 0 ? x ? 1 : 0 : -1; }
+
+bool inter1(long long a, long long b, long long c, long long d) {
+    if (a > b)
+        swap(a, b);
+    if (c > d)
+        swap(c, d);
+    return max(a, c) <= min(b, d);
+}
+
+bool check_inter(const pt& a, const pt& b, const pt& c, const pt& d) {
+    if (c.cross(a, d) == 0 && c.cross(b, d) == 0)
+        return inter1(a.x, b.x, c.x, d.x) && inter1(a.y, b.y, c.y, d.y);
+    return sgn(a.cross(b, c)) != sgn(a.cross(b, d)) &&
+           sgn(c.cross(d, a)) != sgn(c.cross(d, b));
 }\end{lstlisting}
 
 \section{Primalidad}
@@ -2869,6 +2516,601 @@ int main()
 
 \section{Graphs}
 
+\subsection{\texttt{2-sat}}
+\begin{lstlisting}
+struct TwoSatSolver {
+    int n_vars;
+    int n_vertices;
+    vector<vector<int>> adj, adj_t;
+    vector<bool> used;
+    vector<int> order, comp;
+    vector<bool> assignment;
+
+    TwoSatSolver(int _n_vars) : n_vars(_n_vars), n_vertices(2 * n_vars), adj(n_vertices), adj_t(n_vertices), used(n_vertices), order(), comp(n_vertices, -1), assignment(n_vars) {
+        order.reserve(n_vertices);
+    }
+    void dfs1(int v) {
+        used[v] = true;
+        for (int u : adj[v]) {
+            if (!used[u])
+                dfs1(u);
+        }
+        order.push_back(v);
+    }
+
+    void dfs2(int v, int cl) {
+        comp[v] = cl;
+        for (int u : adj_t[v]) {
+            if (comp[u] == -1)
+                dfs2(u, cl);
+        }
+    }
+
+    bool solve_2SAT() {
+        order.clear();
+        used.assign(n_vertices, false);
+        for (int i = 0; i < n_vertices; ++i) {
+            if (!used[i])
+                dfs1(i);
+        }
+
+        comp.assign(n_vertices, -1);
+        for (int i = 0, j = 0; i < n_vertices; ++i) {
+            int v = order[n_vertices - i - 1];
+            if (comp[v] == -1)
+                dfs2(v, j++);
+        }
+
+        assignment.assign(n_vars, false);
+        for (int i = 0; i < n_vertices; i += 2) {
+            if (comp[i] == comp[i + 1])
+                return false;
+            assignment[i / 2] = comp[i] > comp[i + 1];
+        }
+        return true;
+    }
+
+    void add_disjunction(int a, bool na, int b, bool nb) {
+        // na and nb signify whether a and b are to be negated 
+        a = 2 * a ^ na;
+        b = 2 * b ^ nb;
+        int neg_a = a ^ 1;
+        int neg_b = b ^ 1;
+        adj[neg_a].push_back(b);
+        adj[neg_b].push_back(a);
+        adj_t[b].push_back(neg_a);
+        adj_t[a].push_back(neg_b);
+    }
+
+    static void example_usage() {
+        TwoSatSolver solver(3); // a, b, c
+        solver.add_disjunction(0, false, 1, true);  //     a  v  not b
+        solver.add_disjunction(0, true, 1, true);   // not a  v  not b
+        solver.add_disjunction(1, false, 2, false); //     b  v      c
+        solver.add_disjunction(0, false, 0, false); //     a  v      a
+        assert(solver.solve_2SAT() == true);
+        auto expected = vector<bool>(True, False, True);
+        assert(solver.assignment == expected);
+    }
+};\end{lstlisting}
+
+\subsection{\texttt{2SAT}}
+\begin{lstlisting}
+    #include <bits/stdc++.h>
+    //#include <ext/pb_ds/assoc_container.hpp>
+    //#include <ext/pb_ds/tree_policy.hpp>
+    #define mp              make_pair
+    #define pb              push_back
+    #define all(a)          (a).begin(), (a).end()
+    #define sz(a)           a.size()
+    #define srt(a)          sort(all(a))
+    #define mem(a, h)       memset(a, (h), sizeof(a))
+    #define f               first
+    #define s               second
+    #define forr(i, b, e)   for(int i = b; i < e; i++)
+    #define forg(i, b, e, m)    for(int i = b; i < e; i+=m)
+    //int in(){int r=0,c;for(c=getchar();c<=32;c=getchar());if(c=='-') return -in();for(;c>32;r=(r<<1)+(r<<3)+c-'0',c=getchar());return r;}
+     
+    using namespace std;
+    //using namespace __gnu_pbds;
+     
+    typedef long long       ll;
+    typedef unsigned long long      ull;
+    typedef pair<int, int>  ii;
+    typedef vector<int>     vi;
+    typedef vector<ii>      vii;
+    typedef vector<ll>      vll;
+    //typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> ordered_set;
+    //find_by_order kth largest  order_of_key <
+    const int tam = 1200;
+    const int MOD = 1e9+7;
+    const int MOD1 = 988244535;
+    const double EPS = 1e-9;
+    const double PI = acos(-1);
+    #define forite(it,a,b) for(auto it=a;it!=b;it++)
+    vector<int> g[tam],ginv[tam];
+     
+    int n,m;
+    int neg(int num)
+    {
+        if (num>n)
+            return num-n;
+        return num+n;
+    }
+     
+    void add(int iz,int der)
+    {
+        g[iz].pb(der);
+        g[neg(der)].pb(neg(iz));
+     
+        ginv[der].pb(iz);
+        ginv[neg(iz)].pb(neg(der));
+    }
+    bool vis[tam],valor[tam];vector<int> orden;
+    void dfs0(int num)
+    {
+        vis[num]=1;
+        for(int hijo:g[num])
+        {
+            if (!vis[hijo])
+                dfs0(hijo);
+        }
+        orden.pb(num);
+    }
+    int componente[tam],scc;
+    void dfs1(int num)
+    {
+        vis[num]=1;
+        componente[num]=scc;
+        for(int hijo: ginv[num])
+        {
+            if (!vis[hijo])
+            dfs1(hijo);       
+        }
+    }
+    int main()
+    {
+        ios::sync_with_stdio(0); cin.tie(0);
+        
+        cin>>n>>m;
+        int iz,der,peso;
+        forr(i,0,m)
+        {
+            cin>>iz>>der>>peso;
+            if (peso==1)
+            {
+                add(iz,der);
+                add(der,iz);
+            }
+            else
+            {
+                add(neg(iz),der);
+                add(iz,neg(der));
+            }
+        }
+        memset(vis,0,sizeof vis);
+        forr(i,1,2*n+1)
+        {
+            if (!vis[i])
+                dfs0(i);
+        }
+        memset(vis,0,sizeof vis);
+        scc=0;
+     
+        forr(i,0,orden.size())
+        {
+            iz=orden[orden.size()-1-i];
+            if (!vis[iz]){
+                scc++;
+                dfs1(iz);
+            }
+        }
+        bool invalid=false;
+        vector<int> respuesta;
+        for(int i=1;i<=n;i++)
+        {
+            //cout<<componente[i]<<' '<<componente[i+n]<<endl;
+            if (componente[i]==componente[i+n])
+                invalid=1;
+            if (componente[i]>componente[i+n])
+            {
+                respuesta.pb(i);
+                valor[i]=1;
+            }
+            else valor[i]=0;
+        }
+        if (invalid==false)
+        {
+            cout<<respuesta.size()<<endl;
+            for(int num:respuesta)
+                cout<<num<<" ";
+        }
+        else
+        {
+            cout<<"Impossible\n";
+        }
+    }
+    // read the question correctly (is y a vowel? what are the exact constraints?)
+    // look out for SPECIAL CASES (n=1?) and overflow (ll vs int?) ARRAY OUT OF BOUNDSS2
+\end{lstlisting}
+
+\subsection{\texttt{Algoritmo\_hungaro\_de\_asignacion}}
+\begin{lstlisting}
+int n, m;
+int a[n+1][m+1]; // matriz de costos, 1-index
+vector<int> u(n+1), v(m+1), p(m+1), way(m+1);
+for (int i = 1; i <= n; ++i) {
+	p[0] = i;
+	int j0 = 0;
+	vector<int> minv(m + 1, INF);
+	vector<char> used(m + 1, false); 
+	do {
+		used[j0] = true;
+		int i0 = p[j0], delta = INF, j1;
+		for (int j = 1; j <= m; ++j)
+			if ( !used[j] ) {
+				int cur = a[i0][j] - u[i0] - v[j];
+				if ( cur < minv[j] )
+					minv[j] = cur, way[j] = j0;
+				if ( minv[j] < delta )
+					delta = minv[j], j1 = j;
+			}
+		for (int j = 0; j <= m; ++j)
+			if ( used[j] )
+				u[ p[j] ] += delta, v[j] -= delta;
+			else
+				minv[j] -= delta;
+		j0 = j1;
+	} while ( p[j0] != 0 );
+	do {
+		int j1 = way[j0];
+		p[j0] = p[j1];
+		j0 = j1;
+	} while ( j0 ) ;
+}
+
+vector<int> ans(n+1); // Para cada fila, en que columna esta el resultado.
+for (int j = 1; j <= m; ++j)
+	ans[ p[j] ] = j;
+
+int cost = -v[0];
+\end{lstlisting}
+
+\subsection{\texttt{FordFulkerson}}
+\begin{lstlisting}
+//O(E*F)donde F flujo maximo
+
+int dfs(int v, int t, int pushed) {
+    if (v == t) return pushed;
+    vis[v] = 1;
+
+    for (auto &e : G[v]) {
+        if (!vis[e.to] && e.cap > 0) {
+            int f = dfs(e.to, t, min(pushed, e.cap));
+            if (f) {
+                e.cap -= f;
+                G[e.to][e.rev].cap += f;
+                return f;
+            }
+        }
+    }
+    return 0;
+}
+
+int maxflow(int s, int t) {
+    int flow = 0;
+    while (true) {
+        fill(vis.begin(), vis.end(), 0);
+        int pushed = dfs(s, t, INF);
+        if (!pushed) break;
+        flow += pushed;
+    }
+    return flow;
+}\end{lstlisting}
+
+\subsection{\texttt{HoprofKarp}}
+\begin{lstlisting}
+
+//complejidad Exraiz(v)
+struct HopcroftKarp{
+    const int INF = 1e9 + 7;
+    HopcroftKarp(){}
+    HopcroftKarp(int nLeft, int nRight){ init(nLeft, nRight); }
+
+    void init(int nLeft, int nRight){
+        L = nLeft, R = nRight;
+        G.clear(), G.resize(L);
+        pairU.assign(L, -1), pairV.assign(R, -1);
+        dist.resize(L), Q.resize(L);
+    }
+
+    int L, R;
+    vector<vi> G;
+    vi pairU, pairV, dist, Q;
+
+    void addEdge(int u, int v){ G[u].pb(v); }
+
+    bool bfs(){
+        int qh = 0, qt = 0;
+        for(int u = 0; u < L; u++){
+            if(pairU[u] == -1) dist[u] = 0, Q[qt++] = u;
+            else dist[u] = INF;
+        }
+        bool ok = 0;
+        while(qh < qt){
+            int u = Q[qh++];
+            for(int v : G[u]){
+                int u2 = pairV[v];
+                if(u2 == -1) ok = 1;
+                else if(dist[u2] == INF) dist[u2] = dist[u] + 1, Q[qt++] = u2;
+            }
+        }
+        return ok;
+    }
+
+    bool dfs(int u){
+        for(int v : G[u]){
+            int u2 = pairV[v];
+            if(u2 == -1 || (dist[u2] == dist[u] + 1 && dfs(u2))){
+                pairU[u] = v, pairV[v] = u;
+                return 1;
+            }
+        }
+        dist[u] = INF;
+        return 0;
+    }
+
+    int maxMatching(){
+        pairU.assign(L, -1), pairV.assign(R, -1);
+        int match = 0;
+        while(bfs()) for(int u = 0; u < L; u++)
+            if(pairU[u] == -1 && dfs(u)) match++;
+        return match;
+    }
+};\end{lstlisting}
+
+\subsection{\texttt{MinCost-MaxFlow\_DEsopo-Pape}}
+\begin{lstlisting}
+struct Edge
+{
+    int from, to, capacity, cost;
+};
+
+vector<vector<int>> adj, cost, capacity;
+
+const int INF = 1e9;
+
+void shortest_paths(int n, int v0, vector<int>& d, vector<int>& p) {
+    d.assign(n, INF);
+    d[v0] = 0;
+    vector<int> m(n, 2);
+    deque<int> q;
+    q.push_back(v0);
+    p.assign(n, -1);
+
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop_front();
+        m[u] = 0;
+        for (int v : adj[u]) {
+            if (capacity[u][v] > 0 && d[v] > d[u] + cost[u][v]) {
+                d[v] = d[u] + cost[u][v];
+                p[v] = u;
+                if (m[v] == 2) {
+                    m[v] = 1;
+                    q.push_back(v);
+                } else if (m[v] == 0) {
+                    m[v] = 1;
+                    q.push_front(v);
+                }
+            }
+        }
+    }
+}
+
+int min_cost_flow(int N, vector<Edge> edges, int K, int s, int t) {
+    adj.assign(N, vector<int>());
+    cost.assign(N, vector<int>(N, 0));
+    capacity.assign(N, vector<int>(N, 0));
+    for (Edge e : edges) {
+        adj[e.from].push_back(e.to);
+        adj[e.to].push_back(e.from);
+        cost[e.from][e.to] = e.cost;
+        cost[e.to][e.from] = -e.cost;
+        capacity[e.from][e.to] = e.capacity;
+    }
+
+    int flow = 0;
+    int cost = 0;
+    vector<int> d, p;
+    while (flow < K) {
+        shortest_paths(N, s, d, p);
+        if (d[t] == INF)
+            break;
+
+        // find max flow on that path
+        int f = K - flow;
+        int cur = t;
+        while (cur != s) {
+            f = min(f, capacity[p[cur]][cur]);
+            cur = p[cur];
+        }
+
+        // apply flow
+        flow += f;
+        cost += f * d[t];
+        cur = t;
+        while (cur != s) {
+            capacity[p[cur]][cur] -= f;
+            capacity[cur][p[cur]] += f;
+            cur = p[cur];
+        }
+    }
+
+    if (flow < K)
+        return -1;
+    else
+        return cost;
+}
+\end{lstlisting}
+
+\subsection{\texttt{MinCostMaxFlow\_Dijkstra}}
+\begin{lstlisting}
+// O(min(E^2*V^2, E*V*FLOW))
+
+#include <bits/stdc++.h>
+//#include <ext/pb_ds/assoc_container.hpp>
+//#include <ext/pb_ds/tree_policy.hpp>
+typedef long long       ll;
+#define pb                emplace_back
+#define mp                make_pair
+#define all(a)            (a).begin(), (a).end()
+#define clr(a,h)          memset(a, (h), sizeof(a))
+#define F first
+#define S second
+#define fore(i, b, e)	  for (int i = (int)b; i < (int)e; i++)
+int faster_in(){int r=0,c;for(c=getchar();c<=32;c=getchar());if(c=='-') return -faster_in();for(;c>32;r=(r<<1)+(r<<3)+c-'0',c=getchar());return r;}
+
+using namespace std;
+//using namespace __gnu_pbds;
+
+typedef pair<int, int>  ii;
+typedef vector<int>     vi;
+typedef vector<ii>      vii;
+typedef vector<ll>      vll;
+//typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> ordered_set;
+const int INF = int(1e9 + 7);
+const double EPS = 1e-9;
+const double PI = acos(-1);
+
+const int tam = 110;
+
+struct Edge
+{
+	int to, rev;
+	int flow, cap;
+	int cost;
+};
+vector<Edge> G[tam];
+
+void addEdge(int s, int t, int cap, int cost)
+{
+	Edge a = {t, (int)G[t].size(), 0, cap, cost};
+	Edge b = {s, (int)G[s].size(), 0, 0, -cost};
+	G[s].pb(a);
+	G[t].pb(b);
+}
+
+int n, m; // En vez de n es mejor usar una variable diferente como 'nodes'
+          // La cantidad de nodos en la red de flujo suele ser difente a la
+          // cantidad en el grafo original
+
+int S, T;
+vector<int> dist;
+int pot[tam], curFlow[tam], prevNode[tam], prevEdge[tam];
+int Q[tam];
+bool inQueue[tam];
+
+void bellmanFord()
+{
+	fill(pot, pot + n, INF);
+	pot[S] = 0;
+	int qt = 0;
+	Q[qt++] = S;
+	for (int qh = 0; (qh - qt) % n != 0; qh++)
+	{
+		int u = Q[qh % n];
+		inQueue[u] = false;
+		for (int i = 0; i < (int)G[u].size(); i++)
+		{
+			Edge &e = G[u][i];
+			if (e.cap <= e.flow) continue;
+			int v = e.to;
+			int newDist = pot[u] + e.cost;
+			if (pot[v] > newDist)
+			{
+				pot[v] = newDist;
+				if (!inQueue[v])
+				{
+					Q[qt++ % n] = v;
+					inQueue[v] = true;
+				}
+			}
+		}
+	}
+}
+
+ii MinCostMaxFlow()
+{
+	bellmanFord();
+	int flow = 0;
+	int flowCost = 0;
+	while (true) // always a good start for an algorithm :v
+	{
+		set<ii> s;
+		s.insert( mp(0, S) );
+		dist.assign(n, INF);
+		dist[S] = 0;
+		curFlow[S] = INF;
+		while (s.size() > 0)
+		{
+			int u = s.begin() -> second;
+			int actDist = s.begin() -> first;
+			s.erase(s.begin());
+			if (actDist > dist[u]) continue;
+			for (int i = 0; i < (int)G[u].size(); i++)
+			{
+				Edge &e = G[u][i];
+				int v = e.to;
+				if (e.cap <= e.flow) continue;
+				int newDist = actDist + e.cost + pot[u] - pot[v];
+				if (newDist < dist[v])
+				{
+					dist[v] = newDist;
+					s.insert( mp(newDist, v) );
+					prevNode[v] = u;
+					prevEdge[v] = i;
+					curFlow[v] = min(curFlow[u], e.cap - e.flow);
+				}
+			}
+		}
+		if (dist[T] == INF) 
+			break;
+		for (int i = 0; i < n; i++)
+			pot[i] += dist[i];
+		int df = curFlow[T];
+		flow += df;
+		for (int v = T; v != S; v = prevNode[v])
+		{
+			Edge &e = G[prevNode[v]][prevEdge[v]];
+			e.flow += df;
+			G[v][e.rev].flow -= df;
+			flowCost += df * e.cost;
+		}
+	}
+	return mp(flow, flowCost);
+}
+
+int main()
+{
+    std::ios::sync_with_stdio(false); cin.tie(0);
+    //freopen("","r",stdin);
+    //freopen("","w",stdout);
+    cin >> n >> m;
+    S = 0, T = n-1;
+    fore(i, 0, m)
+    {
+    	int a, b, cap, cost;
+    	cin >> a >> b >> cap >> cost;
+    	a--; b--;
+    	addEdge(a, b, cap, cost);
+    }
+    cout << MinCostMaxFlow().S << '\n';
+    return 0;
+}
+// PLUS ULTRA!
+\end{lstlisting}
+
 \subsection{\texttt{articulationpoint}}
 \begin{lstlisting}
 int n; // number of nodes
@@ -2948,6 +3190,198 @@ void find_bridges() {
         if (!vis[i])
             dfs(i);
     }
+}\end{lstlisting}
+
+\subsection{\texttt{centroid}}
+\begin{lstlisting}
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef long long ll;
+const int MAXN=1e5;
+vector<int> gf[MAXN];
+bool die[MAXN]={};
+int ch[MAXN]={};
+int n,q;
+
+vector<int> min_dist(MAXN,1e9);
+
+int get_sz_subTree(int nodo,int p)
+{
+    ch[nodo]=1;
+    for(int &h:gf[nodo])
+    {
+        if(die[h] or h==p)continue;
+        ch[nodo]+=get_sz_subTree(h,nodo);
+    }
+    return ch[nodo];
+}
+
+int get_centroid(int nodo,int p,int sz)
+{
+    for(int &h:gf[nodo])
+    {
+        if(die[h] or h==p)continue;
+        if(ch[h]*2>sz)return get_centroid(h,nodo,sz);
+    }
+    return nodo;
+}
+
+vector<pair<int,int>> ancenstros[MAXN];
+
+void get_dist(int nodo,int p,int lvl,int cent)
+{
+    ancenstros[nodo].push_back({cent,lvl});
+    for(int &h:gf[nodo])
+    {
+        if(h!=p and !die[h])
+        {
+            get_dist(h,nodo,lvl+1,cent);
+        }
+    }
+}
+
+void sexo_decomposition(int nodo)
+{
+    int cent=get_centroid(nodo,-1,get_sz_subTree(nodo,-1));
+    //algo
+
+    for(int &h:gf[cent])
+    {
+        if(!die[h])
+        {
+            get_dist(h,cent,1,cent);
+        }
+    }
+
+
+    die[cent]=1;
+    for(int &h:gf[cent])if(!die[h])sexo_decomposition(h);    
+}
+
+void pintar(int nodo)
+{
+    for(auto &[ancestro,dis]:ancenstros[nodo])
+    {
+        min_dist[ancestro]=min(min_dist[ancestro],dis);
+    }
+    min_dist[nodo]=0;
+}
+
+int query(int nodo)
+{
+    int res=min_dist[nodo];
+
+    for(auto [ancient,dist]:ancenstros[nodo])
+    {
+        res=min(res,dist+min_dist[ancient]);
+    }
+    return res;
+
+}
+
+
+int main()
+{
+    cin.tie(nullptr)->sync_with_stdio(false);
+    cin>>n>>q;
+
+    for(int i=0;i<n-1;i++)
+    {
+        int a,b;cin>>a>>b;
+        a--;b--;
+        gf[a].push_back(b);
+        gf[b].push_back(a);
+    }
+
+    sexo_decomposition(0);
+
+    pintar(0);
+
+    while(q--)
+    {
+        int type;cin>>type;
+        int v;cin>>v;v--;
+        if(type&1)
+        {
+            pintar(v);
+        }
+        else
+        {
+            cout<<query(v)<<"\n";
+        }
+    }
+
+
+
+
+    return 0;
+
+}\end{lstlisting}
+
+\subsection{\texttt{componentes\_fuertemente\_conexos}}
+\begin{lstlisting}
+#include <bits/stdc++.h>
+
+const int N = 1e5 + 1;
+
+// adj_t is the transpose of adj
+std::vector<int> adj[N], adj_t[N];
+std::vector<int> order;
+std::vector<int> vis(N), id(N);
+
+// calculates the order in which nodes are processed
+void dfs1(int v) {
+	vis[v] = true;
+	for (int u : adj[v]) {
+		if (!vis[u]) { dfs1(u); }
+	}
+	order.push_back(v);
+}
+
+/*
+ * traverse one SCC at a time and
+ * assign component ID to all nodes in one SCC
+ */
+void dfs2(int x, int comp) {
+	vis[x] = true;
+
+	for (int u : adj_t[x]) {
+		if (!vis[u]) { dfs2(u, comp); }
+	}
+	id[x] = comp;
+}
+
+int main() {
+	int n, m;
+	std::cin >> n >> m;
+
+	for (int i = 1; i <= m; i++) {
+		int u, v;
+		std::cin >> u >> v;
+		adj[u].push_back(v);
+		adj_t[v].push_back(u);
+	}
+
+	vis.assign(N, false);
+
+	for (int i = 1; i <= n; i++) {
+		if (!vis[i]) { dfs1(i); }
+	}
+
+	vis.assign(N, false);
+	std::reverse(begin(order), end(order));
+	int comps = 0;
+	for (int v : order) {
+		if (!vis[v]) {
+			comps++;  // counter for SCC
+			dfs2(v, comps);
+		}
+	}
+
+	std::cout << comps << '\n';
+
+	for (int i = 1; i <= n; i++) { std::cout << id[i] << " \n"[i == n]; }
 }\end{lstlisting}
 
 \subsection{\texttt{dijstra}}
@@ -3066,6 +3500,143 @@ struct Dinic {
     }
 };\end{lstlisting}
 
+\subsection{\texttt{dinitz}}
+\begin{lstlisting}
+//O((V^2)*E)
+
+//Dinic igual complejidad
+
+struct Dinitz{
+    const int INF = 1e9 + 7;
+    Dinitz(){}
+    Dinitz(int n, int s, int t) {init(n, s, t);}
+
+    void init(int n, int s, int t)
+    {
+        S = s, T = t;
+        nodes = n;
+        G.clear(), G.resize(n);
+        Q.resize(n);
+    }
+    struct flowEdge
+    {
+        int to, rev, f, cap;
+    };
+
+    vector<vector<flowEdge> > G;
+
+    // Aniade arista (st -> en) con su capacidad
+    void addEdge(int st, int en, int cap) {
+        flowEdge A = {en, (int)G[en].size(), 0, cap};
+        flowEdge B = {st, (int)G[st].size(), 0, 0};
+        G[st].pb(A);
+        G[en].pb(B);
+    }
+
+    int nodes, S, T; // asignar estos valores al armar el grafo G
+                    // nodes = nodos en red de flujo. Hacer G.clear(); G.resize(nodes);
+    vi work, lvl;
+    vi Q;
+
+    bool bfs() {
+        int qt = 0;
+        Q[qt++] = S;
+        lvl.assign(nodes, -1);
+        lvl[S] = 0;
+        for (int qh = 0; qh < qt; qh++) {
+            int v = Q[qh];
+            for (flowEdge &e : G[v]) {
+                int u = e.to;
+                if (e.cap <= e.f || lvl[u] != -1) continue;
+                lvl[u] = lvl[v] + 1;
+                Q[qt++] = u;
+            }
+        }
+        return lvl[T] != -1;
+    }
+
+    int dfs(int v, int f) {
+        if (v == T || f == 0) return f;
+        for (int &i = work[v]; i < G[v].size(); i++) {
+            flowEdge &e = G[v][i];
+            int u = e.to;
+            if (e.cap <= e.f || lvl[u] != lvl[v] + 1) continue;
+            int df = dfs(u, min(f, e.cap - e.f));
+            if (df) {
+                e.f += df;
+                G[u][e.rev].f -= df;
+                return df;
+            }
+        }
+        return 0;
+    }
+
+    int maxFlow() {
+        int flow = 0;
+        while (bfs()) {
+            work.assign(nodes, 0);
+            while (true) {
+                int df = dfs(S, INF);
+                if (df == 0) break;
+                flow += df;
+            }
+        }
+        return flow;
+    }
+};\end{lstlisting}
+
+\subsection{\texttt{edmonkarp}}
+\begin{lstlisting}
+//O(V*(E^2))
+
+int n;
+vector<vector<int>> capacity;
+vector<vector<int>> adj;
+
+int bfs(int s, int t, vector<int>& parent) {
+    fill(parent.begin(), parent.end(), -1);
+    parent[s] = -2;
+    queue<pair<int, int>> q;
+    q.push({s, INF});
+
+    while (!q.empty()) {
+        int cur = q.front().first;
+        int flow = q.front().second;
+        q.pop();
+
+        for (int next : adj[cur]) {
+            if (parent[next] == -1 && capacity[cur][next]) {
+                parent[next] = cur;
+                int new_flow = min(flow, capacity[cur][next]);
+                if (next == t)
+                    return new_flow;
+                q.push({next, new_flow});
+            }
+        }
+    }
+
+    return 0;
+}
+
+int maxflow(int s, int t) {
+    int flow = 0;
+    vector<int> parent(n);
+    int new_flow;
+
+    while (new_flow = bfs(s, t, parent)) {
+        flow += new_flow;
+        int cur = t;
+        while (cur != s) {
+            int prev = parent[cur];
+            capacity[prev][cur] -= new_flow;
+            capacity[cur][prev] += new_flow;
+            cur = prev;
+        }
+    }
+
+    return flow;
+}\end{lstlisting}
+
 \subsection{\texttt{eulerianpath}}
 \begin{lstlisting}
 int main() {
@@ -3152,6 +3723,160 @@ int main() {
     }
 }\end{lstlisting}
 
+\subsection{\texttt{floyd\_warshall}}
+\begin{lstlisting}
+for (int k = 0; k < n; ++k) {
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (d[i][k] < INF && d[k][j] < INF)
+                d[i][j] = min(d[i][j], d[i][k] + d[k][j]); 
+        }
+    }
+}\end{lstlisting}
+
+\subsection{\texttt{hld}}
+\begin{lstlisting}
+
+const int MAXN=2e5;
+vector<int> gf[MAXN];
+int parent[MAXN],depth[MAXN],heavy[MAXN],head[MAXN],pos[MAXN];
+int cur_pos;
+const ll MOD=1000000007;
+ 
+int n;
+
+int dfs(int nodo)
+{
+    int size=1;
+    int max_c_size=0;
+    for(int &c:gf[nodo])
+    {   
+        if(c!=parent[nodo])
+        {
+            parent[c]=nodo;
+            depth[c]=depth[nodo]+1;
+ 
+            int c_size=dfs(c);
+            size+=c_size;
+ 
+            if(c_size>max_c_size)
+            {
+                max_c_size=c_size;
+                heavy[nodo]=c;
+            }
+        }
+    }
+    return size;
+}
+ 
+void update_on_vertex(int a, int b, ll val)
+{
+    for(; head[a] != head[b]; b = parent[head[b]])
+    {
+        if(depth[head[a]] > depth[head[b]])
+            swap(a,b);
+ 
+        st.update(1,0,st.sz-1,pos[head[b]],pos[b],val);
+    }
+ 
+    if(depth[a] > depth[b])
+        swap(a,b);
+ 
+    st.update(1,0,st.sz-1,pos[a],pos[b],val);
+}
+ 
+ll query_on_vertex(int a, int b)
+{
+    ll res = 0;
+ 
+    for(; head[a] != head[b]; b = parent[head[b]])
+    {
+        if(depth[head[a]] > depth[head[b]])
+            swap(a,b);
+ 
+        res = max(res , st.query(1,0,st.sz-1,pos[head[b]],pos[b]));
+    }
+ 
+    if(depth[a] > depth[b])
+        swap(a,b);
+ 
+    res = max(res , st.query(1,0,st.sz-1,pos[a],pos[b]));
+    return res;
+}
+ 
+ 
+void decompose(int v,int h)
+{
+    head[v]=h;
+    pos[v]=cur_pos++;
+    if(heavy[v]!=-1)
+    {
+        decompose(heavy[v],h);
+    }
+    for(int &c:gf[v])
+    {
+        if(c!=parent[v] && c!=heavy[v])
+        {
+            decompose(c,c);
+        }
+    }
+}
+ 
+void init()
+{
+    // parent=vector<int>(n);
+    // depth=vector<int>(n);
+    // heavy=vector<int>(n);
+    // head=vector<int>(n);
+    // pos=vector<int>(n);
+    for(int i=0;i<MAXN;i++)heavy[i]=-1;
+    cur_pos=0;
+ 
+    dfs(0);
+    decompose(0,0);
+}
+ 
+ 
+void update(int a,int b, ll val)//es query y update a la vez
+{
+    for(;head[a]!=head[b];b=parent[head[b]])
+    {
+        if(depth[head[a]]>depth[head[b]])swap(a,b);
+        // ll resdomer=st.query()
+        st.update(1,0,st.sz-1,pos[head[b]],pos[b],val);
+        // res=(res*resdomer)%MOD;
+    }
+ 
+    if(depth[a]>depth[b])swap(a,b);
+ 
+    if(a != b)st.update(1,0,st.sz-1,pos[a]+1,pos[b],val);
+}
+ 
+ 
+ll query(int a,int b)//quety on edges
+{
+    ll res=0;
+ 
+    for(;head[a]!=head[b];b=parent[head[b]])
+    {
+        if(depth[head[a]]>depth[head[b]])swap(a,b);
+        // ll resdomer=st.query()
+        ll redomer=st.query(1,0,st.sz-1,pos[head[b]],pos[b]);
+        res=(res+redomer);
+    }
+ 
+    if(depth[a]>depth[b])swap(a,b);
+ 
+ 
+    ll last_heavy_path_res=0;
+    if(a != b)last_heavy_path_res=st.query(1,0,st.sz-1,pos[a]+1,pos[b]);
+ 
+    // ll last_heavy_path_res=1;
+    res=(res+last_heavy_path_res);
+    return res;
+}
+ \end{lstlisting}
+
 \subsection{\texttt{isDag}}
 \begin{lstlisting}
 vector<vector<int>> gf;  // lista de adyacencia
@@ -3205,6 +3930,46 @@ void isDAG(int nodo)
     }
     st.erase(nodo);
 }\end{lstlisting}
+
+\subsection{\texttt{khun}}
+\begin{lstlisting}
+//O(LxE)
+
+struct Kuhn{
+    Kuhn(){}
+    Kuhn(int nLeft, int nRight){ init(nLeft, nRight); }
+
+    void init(int nLeft, int nRight){
+        L = nLeft, R = nRight;
+        G.clear(), G.resize(L);
+        mt.assign(R, -1);
+        used.assign(L, 0);
+        cc = 1;
+    }
+
+    int L, R, cc;
+    vector<vi> G;
+    vi mt, used; // mt[to] = nodo izquierdo emparejado con to
+
+    void addEdge(int u, int v){ G[u].pb(v); }
+
+    bool dfs(int v){
+        if(used[v] == cc) return 0;
+        used[v] = cc;
+        for(int to : G[v]) if(mt[to] == -1 || dfs(mt[to])) return mt[to] = v, 1;
+        return 0;
+    }
+
+    int maxMatching(){
+        mt.assign(R, -1);
+        int match = 0;
+        for(int v = 0; v < L; v++){
+            ++cc;
+            if(dfs(v)) match++;
+        }
+        return match;
+    }
+};\end{lstlisting}
 
 \subsection{\texttt{khunMaxbipartiteMatching}}
 \begin{lstlisting}
@@ -3363,6 +4128,85 @@ struct cmpST
 
 \section{Dp}
 
+\subsection{\texttt{LCA\_DP}}
+\begin{lstlisting}
+#include <bits/stdc++.h>
+#define clr(a,h)          memset(a, (h), sizeof(a))
+
+using namespace std;
+
+const int tam = 1010; // Max Nodos
+const int Log2Tam = (log(tam)/log(2)) + 3;
+
+vector< vi > g;
+int dp[tam][Log2Tam], depth[tam];
+int n, m, root; // nodos, aristas, raiz del arbol
+
+void initDFS(int v, int p, int d)
+{
+	dp[v][0] = p; // padre inmediato
+	depth[v] = d;
+	for (int u : g[v])
+	{
+		if (u == p) continue;
+		initDFS(u, v, d+1);
+	}
+}
+
+void initLCA()
+{
+	clr(dp, -1);
+	initDFS(root, -1, 0);
+	for (int pot = 1; pot < Log2Tam; pot++)
+	{
+		for (int v = 0; v < n; v++)
+		{
+			if (dp[v][pot-1] == -1) continue;
+			dp[v][pot] = dp[ dp[v][pot-1] ][pot-1];
+		}
+	}
+}
+
+int LCA(int a, int b)
+{
+	// b siempre debajo o al mismo nivel que a
+	if (depth[a] > depth[b]) swap(a, b);
+	
+	int diff = depth[b] - depth[a];
+	for (int pot = Log2Tam-1; pot >= 0; pot--)
+	{
+		if ( ( diff & (1 << pot) ) )
+		{
+			b = dp[b][pot];
+		}
+	}
+	if (a == b) return a;
+	for (int pot = Log2Tam-1; pot >= 0; pot--)
+	{
+		if (dp[a][pot] != dp[b][pot])
+		{
+			a = dp[a][pot];
+			b = dp[b][pot];
+		}
+	}
+	int lca = dp[a][0];
+	return lca;
+}
+
+int main()
+{
+    /*
+        Iniciar el arbol en el grafo g
+        Asignar la raiz en la variable root
+        
+        Llamar initLCA() luego de crear el arbol
+        LCA(a, b) devuelve el LCA de los nodos a y b
+    */
+    return 0;
+}
+// PLUS ULTRA!
+\end{lstlisting}
+
 \subsection{\texttt{covexHullTrick}}
 \begin{lstlisting}
 struct ConvexHull
@@ -3415,6 +4259,24 @@ struct ConvexHull
     }
 };
 \end{lstlisting}
+
+\subsection{\texttt{lis}}
+\begin{lstlisting}
+// Longest Increasing Subsequence - O(nlogn)
+//
+// dp(i) = max j<i { dp(j) | a[j] < a[i] } + 1
+//
+
+// int dp[N], v[N], n, lis;
+
+memset(dp, 63, sizeof dp);
+for (int i = 0; i < n; ++i) {
+  // increasing: lower_bound
+  // non-decreasing: upper_bound
+  int j = lower_bound(dp, dp + lis, v[i]) - dp;
+  dp[j] = min(dp[j], v[i]);
+  lis = max(lis, j + 1);
+}\end{lstlisting}
 
 \subsection{\texttt{list}}
 \begin{lstlisting}
