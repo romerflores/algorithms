@@ -1,140 +1,219 @@
+const int MAXN = 2e5 + 5;
 
-const int MAXN=2e5;
 vector<int> gf[MAXN];
-int parent[MAXN],depth[MAXN],heavy[MAXN],head[MAXN],pos[MAXN];
+
+int parent[MAXN];
+int depth[MAXN];
+int heavy[MAXN];
+int head[MAXN];
+int pos[MAXN];
+
 int cur_pos;
-const ll MOD=1000000007;
- 
 int n;
 
 int dfs(int nodo)
 {
-    int size=1;
-    int max_c_size=0;
-    for(int &c:gf[nodo])
-    {   
-        if(c!=parent[nodo])
+    int size = 1;
+    int max_c_size = 0;
+
+    for(int c : gf[nodo])
+    {
+        if(c == parent[nodo])
+            continue;
+
+        parent[c] = nodo;
+        depth[c] = depth[nodo] + 1;
+
+        int c_size = dfs(c);
+        size += c_size;
+
+        if(c_size > max_c_size)
         {
-            parent[c]=nodo;
-            depth[c]=depth[nodo]+1;
- 
-            int c_size=dfs(c);
-            size+=c_size;
- 
-            if(c_size>max_c_size)
-            {
-                max_c_size=c_size;
-                heavy[nodo]=c;
-            }
+            max_c_size = c_size;
+            heavy[nodo] = c;
         }
     }
+
     return size;
 }
- 
+
+void decompose(int nodo, int h)
+{
+    head[nodo] = h;
+    pos[nodo] = cur_pos++;
+
+    if(heavy[nodo] != -1)
+        decompose(heavy[nodo], h);
+
+    for(int c : gf[nodo])
+    {
+        if(c != parent[nodo] && c != heavy[nodo])
+            decompose(c, c);
+    }
+}
+
+void init(int root = 0)
+{
+    fill(heavy, heavy + n, -1);
+
+    cur_pos = 0;
+    parent[root] = -1;
+    depth[root] = 0;
+
+    dfs(root);
+    decompose(root, root);
+}
+
+/* ==================== VERTICES ==================== */
+
+void set_vertex(int nodo, ll val)
+{
+    st.update(
+        1, 0, st.sz - 1,
+        pos[nodo], pos[nodo],
+        val
+    );
+}
+
 void update_on_vertex(int a, int b, ll val)
 {
-    for(; head[a] != head[b]; b = parent[head[b]])
+    while(head[a] != head[b])
     {
         if(depth[head[a]] > depth[head[b]])
-            swap(a,b);
- 
-        st.update(1,0,st.sz-1,pos[head[b]],pos[b],val);
+            swap(a, b);
+
+        st.update(
+            1, 0, st.sz - 1,
+            pos[head[b]], pos[b],
+            val
+        );
+
+        b = parent[head[b]];
     }
- 
+
     if(depth[a] > depth[b])
-        swap(a,b);
- 
-    st.update(1,0,st.sz-1,pos[a],pos[b],val);
+        swap(a, b);
+
+    st.update(
+        1, 0, st.sz - 1,
+        pos[a], pos[b],
+        val
+    );
 }
- 
+
 ll query_on_vertex(int a, int b)
 {
     ll res = 0;
- 
-    for(; head[a] != head[b]; b = parent[head[b]])
+
+    while(head[a] != head[b])
     {
         if(depth[head[a]] > depth[head[b]])
-            swap(a,b);
- 
-        res = max(res , st.query(1,0,st.sz-1,pos[head[b]],pos[b]));
+            swap(a, b);
+
+        res = max(
+            res,
+            st.query(
+                1, 0, st.sz - 1,
+                pos[head[b]], pos[b]
+            )
+        );
+
+        b = parent[head[b]];
     }
- 
+
     if(depth[a] > depth[b])
-        swap(a,b);
- 
-    res = max(res , st.query(1,0,st.sz-1,pos[a],pos[b]));
+        swap(a, b);
+
+    res = max(
+        res,
+        st.query(
+            1, 0, st.sz - 1,
+            pos[a], pos[b]
+        )
+    );
+
     return res;
 }
- 
- 
-void decompose(int v,int h)
+
+/* ==================== ARISTAS ==================== */
+
+// La arista (u, v) se guarda en el nodo mas profundo.
+void set_edge(int u, int v, ll val)
 {
-    head[v]=h;
-    pos[v]=cur_pos++;
-    if(heavy[v]!=-1)
+    if(parent[u] == v)
     {
-        decompose(heavy[v],h);
+        st.update(
+            1, 0, st.sz - 1,
+            pos[u], pos[u],
+            val
+        );
     }
-    for(int &c:gf[v])
+    else if(parent[v] == u)
     {
-        if(c!=parent[v] && c!=heavy[v])
-        {
-            decompose(c,c);
-        }
+        st.update(
+            1, 0, st.sz - 1,
+            pos[v], pos[v],
+            val
+        );
     }
 }
- 
-void init()
+
+void update_on_edge(int a, int b, ll val)
 {
-    // parent=vector<int>(n);
-    // depth=vector<int>(n);
-    // heavy=vector<int>(n);
-    // head=vector<int>(n);
-    // pos=vector<int>(n);
-    for(int i=0;i<MAXN;i++)heavy[i]=-1;
-    cur_pos=0;
- 
-    dfs(0);
-    decompose(0,0);
-}
- 
- 
-void update(int a,int b, ll val)//es query y update a la vez
-{
-    for(;head[a]!=head[b];b=parent[head[b]])
+    while(head[a] != head[b])
     {
-        if(depth[head[a]]>depth[head[b]])swap(a,b);
-        // ll resdomer=st.query()
-        st.update(1,0,st.sz-1,pos[head[b]],pos[b],val);
-        // res=(res*resdomer)%MOD;
+        if(depth[head[a]] > depth[head[b]])
+            swap(a, b);
+
+        st.update(
+            1, 0, st.sz - 1,
+            pos[head[b]], pos[b],
+            val
+        );
+
+        b = parent[head[b]];
     }
- 
-    if(depth[a]>depth[b])swap(a,b);
- 
-    if(a != b)st.update(1,0,st.sz-1,pos[a]+1,pos[b],val);
-}
- 
- 
-ll query(int a,int b)//quety on edges
-{
-    ll res=0;
- 
-    for(;head[a]!=head[b];b=parent[head[b]])
+
+    if(depth[a] > depth[b])
+        swap(a, b);
+
+    if(a != b)
     {
-        if(depth[head[a]]>depth[head[b]])swap(a,b);
-        // ll resdomer=st.query()
-        ll redomer=st.query(1,0,st.sz-1,pos[head[b]],pos[b]);
-        res=(res+redomer);
+        st.update(
+            1, 0, st.sz - 1,
+            pos[a] + 1, pos[b],
+            val
+        );
     }
- 
-    if(depth[a]>depth[b])swap(a,b);
- 
- 
-    ll last_heavy_path_res=0;
-    if(a != b)last_heavy_path_res=st.query(1,0,st.sz-1,pos[a]+1,pos[b]);
- 
-    // ll last_heavy_path_res=1;
-    res=(res+last_heavy_path_res);
+}
+
+ll query_on_edge(int a, int b)
+{
+    ll res = 0;
+
+    while(head[a] != head[b])
+    {
+        if(depth[head[a]] > depth[head[b]])
+            swap(a, b);
+
+        res += st.query(
+            1, 0, st.sz - 1,
+            pos[head[b]], pos[b]
+        );
+
+        b = parent[head[b]];
+    }
+
+    if(depth[a] > depth[b])
+        swap(a, b);
+
+    if(a != b)
+    {
+        res += st.query(
+            1, 0, st.sz - 1,
+            pos[a] + 1, pos[b]
+        );
+    }
+
     return res;
 }
- 
