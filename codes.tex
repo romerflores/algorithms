@@ -31,6 +31,88 @@ int main()
 }
 \end{lstlisting}
 
+\subsection{\texttt{crt}}
+\begin{lstlisting}
+using ll = long long;
+using i128 = __int128_t;
+
+ll ext_gcd(ll a, ll b, ll &x, ll &y) {
+    if(!b) {
+        x = 1;
+        y = 0;
+        return a;
+    }
+
+    ll x1, y1;
+    ll g = ext_gcd(b, a % b, x1, y1);
+
+    x = y1;
+    y = x1 - (a / b) * y1;
+
+    return g;
+}
+
+ll mod(ll a, ll m) {
+    return (a % m + m) % m;
+}
+
+bool crt_merge(ll a, ll m, ll b, ll n, ll &res, ll &lcm) {
+    ll x, y;
+    ll g = ext_gcd(m, n, x, y);
+    ll diff = b - a;
+
+    if(diff % g != 0)
+        return false;
+
+    ll ng = n / g;
+    ll k = (ll)((i128)(diff / g) * x % ng);
+    k = mod(k, ng);
+
+    i128 new_lcm = (i128)m / g * n;
+    i128 new_res = (i128)a + (i128)m * k;
+
+    lcm = (ll)new_lcm;
+    res = (ll)(new_res % new_lcm);
+
+    if(res < 0)
+        res += lcm;
+
+    return true;
+}
+
+bool crt(const vector<ll> &a, const vector<ll> &m, ll &res, ll &lcm) {
+    res = 0;
+    lcm = 1;
+
+    for(int i = 0; i < (int)a.size(); i++) {
+        if(m[i] <= 0)
+            return false;
+
+        ll next_res, next_lcm;
+
+        if(!crt_merge(res, lcm, mod(a[i], m[i]), m[i],
+                      next_res, next_lcm))
+            return false;
+
+        res = next_res;
+        lcm = next_lcm;
+    }
+
+    return true;
+}
+
+int main() {
+    vector<ll> a = {2, 3, 2};
+    vector<ll> m = {3, 5, 7};
+
+    ll res, lcm;
+
+    if(crt(a, m, res, lcm))
+        cout << res << ' ' << lcm << '\n';
+    else
+        cout << "No existe solucion\n";
+}\end{lstlisting}
+
 \subsection{\texttt{extended}}
 \begin{lstlisting}
 int x, y, d;
@@ -346,6 +428,133 @@ int rev_g (int g) {
   return n;
 }\end{lstlisting}
 
+\subsection{\texttt{xorBasis}}
+\begin{lstlisting}
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 3e5 + 9;
+using ll = long long;
+
+template<typename T = int, int B = 31>
+struct Basis {
+  T basis[B]; int sz;
+  void clear() {
+    memset(basis, 0, sizeof basis);
+    sz = 0;
+  }
+  Basis() {
+    clear();
+  }
+  void insert(T x) {
+    for (int i = B - 1; i >= 0; i--) {
+      if (x >> i & 1) {
+        if (basis[i]) x ^= basis[i];
+        else {
+          basis[i] = x;
+          sz++;
+          break;
+        }
+      }
+    }
+  }
+  // is there any subset having xor = x
+  bool can(T x) {
+    for(int i = B - 1; i >= 0; i--) {
+      x = min(x, x ^ basis[i]);
+    }
+    return x == 0;
+  }
+  // max subset xor after xoring it with x
+  T max_xor(T x = 0) { 
+    for(int i = B - 1; i >= 0; i--) {
+      x = max(x, x ^ basis[i]);
+    }
+    return x;
+  }
+  // kth smallest subset xor, 1st is 0
+  T kth(T k) {
+    if (k < 1 || k > ((T)1 << sz)) {
+      return -1;
+    }
+    T x = 0;
+    T cnt = ((T)1 << sz);
+    for (int i = B - 1; i >= 0; i--) {
+      if (basis[i]) {
+        if (k > (cnt >> 1)) {
+          // set the ith bit
+          if (!(x >> i & 1)) {
+            x ^= basis[i];
+          }
+          k -= (cnt >> 1);
+        } else {
+          // unset the ith bit
+          if (x >> i & 1) {
+            x ^= basis[i];
+          }
+        }
+        cnt >>= 1;
+      }
+    }
+    return x;
+  }
+  // number of subsets having xor < x
+  T count_lt(T x) {
+    if (x < 0) {
+      return 0;
+    }
+    T ans = 0;
+    T cnt = ((T)1 << sz);
+    T mask = 0;
+    for (int i = B - 1; i >= 0; i--) {
+      // at this stage, all prev > i th bits in mask and x are the same
+      if (basis[i]) {
+        if (x >> i & 1) {
+          ans += (cnt >> 1);
+          if (!(mask >> i & 1)) {
+            mask ^= basis[i];
+          }
+        } else {
+          if (mask >> i & 1) {
+            mask ^= basis[i];
+          }
+        }
+        cnt >>= 1;
+      } else {
+        if ((x >> i & 1) != (mask >> i & 1)) {
+          if (x >> i & 1) {
+            return ans + cnt;
+          } else {
+            return ans; 
+          }
+        }
+      }
+    }
+    return ans;
+  }
+};
+
+void solve() {
+  int q; cin >> q;
+  Basis B;
+  while (q--) {
+    int ty, k; cin >> ty >> k;
+    if (ty == 1) B.insert(k);
+    else cout << B.kth(k) << '\n';
+  }
+}
+
+int32_t main() {
+  ios_base::sync_with_stdio(0);
+  cin.tie(0);
+  int t = 1;
+  // cin >> t;
+  while (t--) {
+    solve();
+  }
+  return 0;
+}\end{lstlisting}
+
 \section{Miscelanea}
 
 \subsection{\texttt{Plantilla}}
@@ -400,6 +609,119 @@ int main()
     CRISTIANO_RONALDO_GANO_35_COPAS
     //sol
     return 0;
+}\end{lstlisting}
+
+\subsection{\texttt{bashCompilar}}
+\begin{lstlisting}
+/*
+#!/bin/bash
+
+FILENAME="${1%.*}"
+g++ -std=c++20 -O2 -Wall -Wextra -Wshadow -Wconversion -Wfloat-equal \
+    -fsanitize=address,undefined -fno-sanitize-recover=all \
+    -g "$1" -o main
+
+# ./"$FILENAME" < in.txt > out.txt
+./main < in.txt > out.txt
+*/
+
+
+\end{lstlisting}
+
+\subsection{\texttt{paralelBinarySearch}}
+\begin{lstlisting}
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+namespace IO {
+#define in() ( { int a ; scanf("%d",&a); a; } )
+#define LL() ( { ll a ; scanf("%lld",&a); a; } )
+#define ULL() ( { ull a ; scanf("%llu",&a); a; } )
+#define DD() ({ double a; scanf("%lf", &a); a;})
+#define CC() ( { char a ; scanf("%c",&a); a; } )
+#define pf1(a) printf("%d\n",a)
+#define pf1ll(a) printf("%lld\n",a)
+}
+using namespace IO;
+const int N = 3e5 + 9;
+template <class T>
+struct BIT {
+  // 1-indexed
+  int sz;
+  vector<T> t;
+
+  void init(int n) { // max size of array
+    sz = n;
+    t.assign(sz, 0);
+  }
+
+  T query(int idx) {
+    T ans = 0;
+    for(; idx >= 1; idx -= (idx & -idx)) ans += t[idx];
+    return ans;
+  }
+
+  void upd(int idx, T val) {
+    if(idx <= 0) return;
+    for(; idx < sz; idx += (idx & -idx)) t[idx] += val;
+  }
+
+  void upd(int l, int r, T val) {
+    upd(l, val);
+    upd(r + 1, -val);
+  }
+
+  T query(int l, int r) {
+    return query(r) - query(l - 1);
+  }
+};
+vector<int> a[N];
+int amount[N], want[N], st[N], en[N], l[N], r[N], ans[N];
+vector<int> mid[N];
+int32_t main() {
+  //freopen("meteors.in","r",stdin);
+  //freopen("meteors.out","w",stdout);
+  int n = in(), m = in();
+  for(int i = 1; i <= m; i++) {
+    int k = in();
+    a[k].push_back(i);
+  }
+  for(int i = 1; i <= n; i++) want[i] = in();
+  int q = in();
+  for(int i = 1; i <= q; i++) {
+    st[i] = in(), en[i] = in();
+    amount[i] = in();
+  }
+  for(int i = 1; i <= n; i++) l[i] = 1, r[i] = q;
+  for(int i = 1; i <= n; i++) mid[l[i] + r[i] >> 1].push_back(i);
+  for(int i = 1; i <= n; i++) ans[i] = -1;
+  while(1) {
+    BIT<ll>t;
+    t.init(m + 1);
+    for(int i = 1; i <= q; i++) {
+      if(st[i] <= en[i]) t.upd(st[i], en[i], amount[i]);
+      else t.upd(1, en[i], amount[i]), t.upd(st[i], m, amount[i]);
+      for(auto x : mid[i]) {
+        ll cnt = 0;
+        for(auto y : a[x]) {
+          cnt += t.query(y);
+          if(cnt >= want[x]) break;
+        }
+        if(cnt >= want[x]) r[x] = i - 1, ans[x] = i;
+        else l[x] = i + 1;
+      }
+    }
+    for(int i = 1; i <= q; i++) mid[i].clear();
+    int ok = 1;
+    for(int i = 1; i <= n; i++) if(l[i] <= r[i]) mid[l[i] + r[i] >> 1].push_back(i), ok = 0;
+    if(ok) break;
+  }
+  for(int i = 1; i <= n; i++) {
+    if(ans[i] == -1) puts("NIE");
+    else pf1(ans[i]);
+  }
+  return 0;
 }\end{lstlisting}
 
 \section{Datastructures}
@@ -723,6 +1045,341 @@ struct SegmentTree
 };
 \end{lstlisting}
 
+\subsection{\texttt{SegmetTreeBeats}}
+\begin{lstlisting}
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+
+const int N = 2e5 + 9;
+
+struct SGTBeats {
+    static constexpr ll INF = 1e18;
+
+    int n, sz;
+    ll mx[4 * N], smx[4 * N], cmx[4 * N];
+    ll mn[4 * N], smn[4 * N], cmn[4 * N];
+    ll sum[4 * N], len[4 * N];
+    ll lazy_add[4 * N], lazy_set[4 * N];
+
+    SGTBeats(int n, ll a[] = nullptr) : n(n), sz(1) {
+        while(sz < n) sz <<= 1;
+
+        fill(lazy_set, lazy_set + 2 * sz, INF);
+        fill(lazy_add, lazy_add + 2 * sz, 0);
+
+        len[0] = sz;
+
+        for(int i = 0; i < sz - 1; i++)
+            len[i * 2 + 1] = len[i * 2 + 2] = len[i] / 2;
+
+        for(int i = 0; i < sz; i++) {
+            int k = sz - 1 + i;
+
+            if(i < n) {
+                ll x = a ? a[i] : 0;
+
+                mx[k] = mn[k] = sum[k] = x;
+                smx[k] = -INF;
+                smn[k] = INF;
+                cmx[k] = cmn[k] = 1;
+            } else {
+                mx[k] = smx[k] = -INF;
+                mn[k] = smn[k] = INF;
+                sum[k] = cmx[k] = cmn[k] = 0;
+            }
+        }
+
+        for(int i = sz - 2; i >= 0; i--)
+            pull(i);
+    }
+
+    void apply_chmin(int k, ll x) {
+        sum[k] += (x - mx[k]) * cmx[k];
+
+        if(mx[k] == mn[k])
+            mx[k] = mn[k] = x;
+        else if(mx[k] == smn[k])
+            mx[k] = smn[k] = x;
+        else
+            mx[k] = x;
+
+        if(lazy_set[k] != INF)
+            lazy_set[k] = min(lazy_set[k], x);
+    }
+
+    void apply_chmax(int k, ll x) {
+        sum[k] += (x - mn[k]) * cmn[k];
+
+        if(mx[k] == mn[k])
+            mx[k] = mn[k] = x;
+        else if(smx[k] == mn[k])
+            mn[k] = smx[k] = x;
+        else
+            mn[k] = x;
+
+        if(lazy_set[k] != INF)
+            lazy_set[k] = max(lazy_set[k], x);
+    }
+
+    void apply_add(int k, ll x) {
+        mx[k] += x;
+        mn[k] += x;
+
+        if(smx[k] != -INF) smx[k] += x;
+        if(smn[k] != INF) smn[k] += x;
+
+        sum[k] += len[k] * x;
+
+        if(lazy_set[k] != INF)
+            lazy_set[k] += x;
+        else
+            lazy_add[k] += x;
+    }
+
+    void apply_set(int k, ll x) {
+        mx[k] = mn[k] = x;
+        smx[k] = -INF;
+        smn[k] = INF;
+        cmx[k] = cmn[k] = len[k];
+        sum[k] = x * len[k];
+        lazy_set[k] = x;
+        lazy_add[k] = 0;
+    }
+
+    void push(int k) {
+        if(k >= sz - 1) return;
+
+        int l = k * 2 + 1;
+        int r = l + 1;
+
+        if(lazy_set[k] != INF) {
+            apply_set(l, lazy_set[k]);
+            apply_set(r, lazy_set[k]);
+            lazy_set[k] = INF;
+            return;
+        }
+
+        if(lazy_add[k]) {
+            apply_add(l, lazy_add[k]);
+            apply_add(r, lazy_add[k]);
+            lazy_add[k] = 0;
+        }
+
+        if(mx[l] > mx[k]) apply_chmin(l, mx[k]);
+        if(mx[r] > mx[k]) apply_chmin(r, mx[k]);
+        if(mn[l] < mn[k]) apply_chmax(l, mn[k]);
+        if(mn[r] < mn[k]) apply_chmax(r, mn[k]);
+    }
+
+    void pull(int k) {
+        int l = k * 2 + 1;
+        int r = l + 1;
+
+        sum[k] = sum[l] + sum[r];
+
+        if(mx[l] == mx[r]) {
+            mx[k] = mx[l];
+            cmx[k] = cmx[l] + cmx[r];
+            smx[k] = max(smx[l], smx[r]);
+        } else if(mx[l] > mx[r]) {
+            mx[k] = mx[l];
+            cmx[k] = cmx[l];
+            smx[k] = max(smx[l], mx[r]);
+        } else {
+            mx[k] = mx[r];
+            cmx[k] = cmx[r];
+            smx[k] = max(mx[l], smx[r]);
+        }
+
+        if(mn[l] == mn[r]) {
+            mn[k] = mn[l];
+            cmn[k] = cmn[l] + cmn[r];
+            smn[k] = min(smn[l], smn[r]);
+        } else if(mn[l] < mn[r]) {
+            mn[k] = mn[l];
+            cmn[k] = cmn[l];
+            smn[k] = min(smn[l], mn[r]);
+        } else {
+            mn[k] = mn[r];
+            cmn[k] = cmn[r];
+            smn[k] = min(mn[l], smn[r]);
+        }
+    }
+
+    void chmin(int a, int b, ll x, int k, int l, int r) {
+        if(r <= a || b <= l || mx[k] <= x) return;
+
+        if(a <= l && r <= b && smx[k] < x) {
+            apply_chmin(k, x);
+            return;
+        }
+
+        push(k);
+
+        int m = (l + r) / 2;
+
+        chmin(a, b, x, k * 2 + 1, l, m);
+        chmin(a, b, x, k * 2 + 2, m, r);
+
+        pull(k);
+    }
+
+    void chmax(int a, int b, ll x, int k, int l, int r) {
+        if(r <= a || b <= l || x <= mn[k]) return;
+
+        if(a <= l && r <= b && x < smn[k]) {
+            apply_chmax(k, x);
+            return;
+        }
+
+        push(k);
+
+        int m = (l + r) / 2;
+
+        chmax(a, b, x, k * 2 + 1, l, m);
+        chmax(a, b, x, k * 2 + 2, m, r);
+
+        pull(k);
+    }
+
+    void add(int a, int b, ll x, int k, int l, int r) {
+        if(r <= a || b <= l) return;
+
+        if(a <= l && r <= b) {
+            apply_add(k, x);
+            return;
+        }
+
+        push(k);
+
+        int m = (l + r) / 2;
+
+        add(a, b, x, k * 2 + 1, l, m);
+        add(a, b, x, k * 2 + 2, m, r);
+
+        pull(k);
+    }
+
+    void assign(int a, int b, ll x, int k, int l, int r) {
+        if(r <= a || b <= l) return;
+
+        if(a <= l && r <= b) {
+            apply_set(k, x);
+            return;
+        }
+
+        push(k);
+
+        int m = (l + r) / 2;
+
+        assign(a, b, x, k * 2 + 1, l, m);
+        assign(a, b, x, k * 2 + 2, m, r);
+
+        pull(k);
+    }
+
+    ll get_max(int a, int b, int k, int l, int r) {
+        if(r <= a || b <= l) return -INF;
+        if(a <= l && r <= b) return mx[k];
+
+        push(k);
+
+        int m = (l + r) / 2;
+
+        return max(
+            get_max(a, b, k * 2 + 1, l, m),
+            get_max(a, b, k * 2 + 2, m, r)
+        );
+    }
+
+    ll get_min(int a, int b, int k, int l, int r) {
+        if(r <= a || b <= l) return INF;
+        if(a <= l && r <= b) return mn[k];
+
+        push(k);
+
+        int m = (l + r) / 2;
+
+        return min(
+            get_min(a, b, k * 2 + 1, l, m),
+            get_min(a, b, k * 2 + 2, m, r)
+        );
+    }
+
+    ll get_sum(int a, int b, int k, int l, int r) {
+        if(r <= a || b <= l) return 0;
+        if(a <= l && r <= b) return sum[k];
+
+        push(k);
+
+        int m = (l + r) / 2;
+
+        return get_sum(a, b, k * 2 + 1, l, m)
+             + get_sum(a, b, k * 2 + 2, m, r);
+    }
+
+    void update_min(int l, int r, ll x) {
+        chmin(l, r, x, 0, 0, sz);
+    }
+
+    void update_max(int l, int r, ll x) {
+        chmax(l, r, x, 0, 0, sz);
+    }
+
+    void add_val(int l, int r, ll x) {
+        add(l, r, x, 0, 0, sz);
+    }
+
+    void update_val(int l, int r, ll x) {
+        assign(l, r, x, 0, 0, sz);
+    }
+
+    ll query_max(int l, int r) {
+        return get_max(l, r, 0, 0, sz);
+    }
+
+    ll query_min(int l, int r) {
+        return get_min(l, r, 0, 0, sz);
+    }
+
+    ll query_sum(int l, int r) {
+        return get_sum(l, r, 0, 0, sz);
+    }
+};
+
+ll a[N];
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, q;
+    cin >> n >> q;
+
+    for(int i = 0; i < n; i++)
+        cin >> a[i];
+
+    SGTBeats st(n, a);
+
+    while(q--) {
+        int type, l, r;
+        cin >> type >> l >> r;
+
+        if(type < 3) {
+            ll x;
+            cin >> x;
+
+            if(type == 0) st.update_min(l, r, x);
+            if(type == 1) st.update_max(l, r, x);
+            if(type == 2) st.add_val(l, r, x);
+        } else {
+            cout << st.query_sum(l, r) << '\n';
+        }
+    }
+}\end{lstlisting}
+
 \subsection{\texttt{SparseTable}}
 \begin{lstlisting}
 struct SparseTable {
@@ -1017,6 +1674,122 @@ struct Sqrt
     }
 };
 \end{lstlisting}
+
+\subsection{\texttt{wavelet\_tree}}
+\begin{lstlisting}
+#include<bits/stdc++.h>
+using namespace std;
+
+const int MAXN = (int)3e5 + 9;
+const int MAXV = (int)1e9 + 9; //maximum value of any element in array
+
+//array values can be negative too, use appropriate minimum and maximum value
+struct wavelet_tree {
+  int lo, hi;
+  wavelet_tree *l, *r;
+  int *b, *c, bsz, csz; // c holds the prefix sum of elements
+
+  wavelet_tree() {
+    lo = 1;
+    hi = 0;
+    bsz = 0;
+    csz = 0, l = NULL;
+    r = NULL;
+  }
+
+  void init(int *from, int *to, int x, int y) {
+    lo = x, hi = y;
+    if(from >= to) return;
+    int mid = (lo + hi) >> 1;
+    auto f = [mid](int x) {
+      return x <= mid;
+    };
+    b = (int*)malloc((to - from + 2) * sizeof(int));
+    bsz = 0;
+    b[bsz++] = 0;
+    c = (int*)malloc((to - from + 2) * sizeof(int));
+    csz = 0;
+    c[csz++] = 0;
+    for(auto it = from; it != to; it++) {
+      b[bsz] = (b[bsz - 1] + f(*it));
+      c[csz] = (c[csz - 1] + (*it));
+      bsz++;
+      csz++;
+    }
+    if(hi == lo) return;
+    auto pivot = stable_partition(from, to, f);
+    l = new wavelet_tree();
+    l->init(from, pivot, lo, mid);
+    r = new wavelet_tree();
+    r->init(pivot, to, mid + 1, hi);
+  }
+  //kth smallest element in [l, r]
+  //for array [1,2,1,3,5] 2nd smallest is 1 and 3rd smallest is 2
+  int kth(int l, int r, int k) {
+    if(l > r) return 0;
+    if(lo == hi) return lo;
+    int inLeft = b[r] - b[l - 1], lb = b[l - 1], rb = b[r];
+    if(k <= inLeft) return this->l->kth(lb + 1, rb, k);
+    return this->r->kth(l - lb, r - rb, k - inLeft);
+  }
+  //count of numbers in [l, r] Less than or equal to k
+  int LTE(int l, int r, int k) {
+    if(l > r || k < lo) return 0;
+    if(hi <= k) return r - l + 1;
+    int lb = b[l - 1], rb = b[r];
+    return this->l->LTE(lb + 1, rb, k) + this->r->LTE(l - lb, r - rb, k);
+  }
+  //count of numbers in [l, r] equal to k
+  int count(int l, int r, int k) {
+    if(l > r || k < lo || k > hi) return 0;
+    if(lo == hi) return r - l + 1;
+    int lb = b[l - 1], rb = b[r];
+    int mid = (lo + hi) >> 1;
+    if(k <= mid) return this->l->count(lb + 1, rb, k);
+    return this->r->count(l - lb, r - rb, k);
+  }
+  //sum of numbers in [l ,r] less than or equal to k
+  int sum(int l, int r, int k) {
+    if(l > r or k < lo) return 0;
+    if(hi <= k) return c[r] - c[l - 1];
+    int lb = b[l - 1], rb = b[r];
+    return this->l->sum(lb + 1, rb, k) + this->r->sum(l - lb, r - rb, k);
+  }
+  ~wavelet_tree() {
+    delete l;
+    delete r;
+  }
+};
+wavelet_tree t;
+int a[MAXN];
+int main() {
+  int i, j, k, n, m, q, l, r;
+  cin >> n;
+  for(i = 1; i <= n; i++) cin >> a[i];
+  t.init(a + 1, a + n + 1, -MAXV, MAXV);
+  //beware! after the init() operation array a[] will not be same
+  cin >> q;
+  while(q--) {
+    int x;
+    cin >> x;
+    cin >> l >> r >> k;
+    if(x == 0) {
+      //kth smallest
+      cout << t.kth(l, r, k) << endl;
+    } else if(x == 1) {
+      //less than or equal to K
+      cout << t.LTE(l, r, k) << endl;
+    } else if(x == 2) {
+      //count occurence of K in [l, r]
+      cout << t.count(l, r, k) << endl;
+    }
+    if(x == 3) {
+      //sum of elements less than or equal to K in [l, r]
+      cout << t.sum(l, r, k) << endl;
+    }
+  }
+  return 0;
+}\end{lstlisting}
 
 \section{Strings}
 
@@ -1547,6 +2320,105 @@ vector<int> manacher(string s) {
     }
     auto res = manacher_odd(t + "#");
     return vector<int>(begin(res) + 1, end(res) - 1);
+}\end{lstlisting}
+
+\subsection{\texttt{stringMatchingFFT}}
+\begin{lstlisting}
+// https://www.informatika.bg/resources/StringMatchingWithFFT.pdf
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 3e5 + 9;
+const int mod = 1e9 + 7;
+
+const double PI = acos(-1);
+struct base {
+  double a, b;
+  base(double a = 0, double b = 0) : a(a), b(b) {}
+  const base operator + (const base &c) const {
+    return base(a + c.a, b + c.b);
+  }
+  const base operator - (const base &c) const {
+    return base(a - c.a, b - c.b);
+  }
+  const base operator * (const base &c) const {
+    return base(a * c.a - b * c.b, a * c.b + b * c.a);
+  }
+};
+void fft(vector<base> &p, bool inv = 0) {
+  int n = p.size(), i = 0;
+  for(int j = 1; j < n - 1; ++j) {
+    for(int k = n >> 1; k > (i ^= k); k >>= 1);
+    if(j < i) swap(p[i], p[j]);
+  }
+  for(int l = 1, m; (m = l << 1) <= n; l <<= 1) {
+    double ang = 2 * PI / m;
+    base wn = base(cos(ang), (inv ? 1. : -1.) * sin(ang)), w;
+    for(int i = 0, j, k; i < n; i += m) {
+      for(w = base(1, 0), j = i, k = i + l; j < k; ++j, w = w * wn) {
+        base t = w * p[j + l];
+        p[j + l] = p[j] - t;
+        p[j] = p[j] + t;
+      }
+    }
+  }
+  if(inv) for(int i = 0; i < n; ++i) p[i].a /= n, p[i].b /= n;
+}
+vector<int> multiply(vector<int> &a, vector<int> &b) {
+  int n = a.size(), m = b.size(), t = n + m - 1, sz = 1;
+  while(sz < t) sz <<= 1;
+  vector<base> x(sz), y(sz), z(sz);
+  for(int i = 0 ; i < sz; ++i) {
+    x[i] = i < a.size() ? base(a[i], 0) : base(0, 0);
+    y[i] = i < b.size() ? base(b[i], 0) : base(0, 0);
+  }
+  fft(x), fft(y);
+  for(int i = 0; i < sz; ++i) z[i] = x[i] * y[i];
+  fft(z, 1);
+  vector<int> ret(sz);
+  for(int i = 0; i < sz; ++i) ret[i] = z[i].a + 0.5;
+  while(ret.size() > 1 && ret.back() == 0) ret.pop_back();
+  return ret;
+}
+//find occurrences of t in s where '?'s are automatically matched with any character
+//res[i + m - 1] = sum_j=0 to m - 1_{s[i + j] * t[j] * (s[i + j] - t[j])^2
+vector<int> string_matching(string &s, string &t) {
+  int n = s.size(), m = t.size();
+  vector<int> s1(n), s2(n), s3(n);
+  for(int i = 0; i < n; i++) s1[i] = s[i] == '?' ? 0 : s[i] - 'a' + 1; //assign any non zero number for non '?'s
+  for(int i = 0; i < n; i++) s2[i] = s1[i] * s1[i];
+  for(int i = 0; i < n; i++) s3[i] = s1[i] * s2[i];
+  vector<int> t1(m), t2(m), t3(m);
+  for(int i = 0; i < m; i++) t1[i] = t[i] == '?' ? 0 : t[i] - 'a' + 1;
+  for(int i = 0; i < m; i++) t2[i] = t1[i] * t1[i];
+  for(int i = 0; i < m; i++) t3[i] = t1[i] * t2[i];
+  reverse(t1.begin(), t1.end());
+  reverse(t2.begin(), t2.end());
+  reverse(t3.begin(), t3.end());
+  vector<int> s1t3 = multiply(s1, t3);
+  vector<int> s2t2 = multiply(s2, t2);
+  vector<int> s3t1 = multiply(s3, t1);
+  vector<int> res(n);
+  for(int i = 0; i < n; i++) res[i] = s1t3[i] - s2t2[i] * 2 + s3t1[i];
+  vector<int> oc;
+  for(int i = m - 1; i < n; i++) if(res[i] == 0) oc.push_back(i - m + 1);
+  return oc;
+}
+int32_t main() {
+  ios_base::sync_with_stdio(0);
+  int t;
+  cin >> t;
+  while(t--) {
+    string a, b;
+    cin >> a >> b;
+    auto ans = string_matching(a, b);
+    if(ans.empty()) cout << "Not Found\n";
+    else {
+      for(auto x : ans) cout << x + 1 << endl;
+    }
+    if(t) cout << endl;
+  }
+  return 0;
 }\end{lstlisting}
 
 \subsection{\texttt{suffixarray}}
@@ -3736,146 +4608,225 @@ for (int k = 0; k < n; ++k) {
 
 \subsection{\texttt{hld}}
 \begin{lstlisting}
+const int MAXN = 2e5 + 5;
 
-const int MAXN=2e5;
 vector<int> gf[MAXN];
-int parent[MAXN],depth[MAXN],heavy[MAXN],head[MAXN],pos[MAXN];
+
+int parent[MAXN];
+int depth[MAXN];
+int heavy[MAXN];
+int head[MAXN];
+int pos[MAXN];
+
 int cur_pos;
-const ll MOD=1000000007;
- 
 int n;
 
 int dfs(int nodo)
 {
-    int size=1;
-    int max_c_size=0;
-    for(int &c:gf[nodo])
-    {   
-        if(c!=parent[nodo])
+    int size = 1;
+    int max_c_size = 0;
+
+    for(int c : gf[nodo])
+    {
+        if(c == parent[nodo])
+            continue;
+
+        parent[c] = nodo;
+        depth[c] = depth[nodo] + 1;
+
+        int c_size = dfs(c);
+        size += c_size;
+
+        if(c_size > max_c_size)
         {
-            parent[c]=nodo;
-            depth[c]=depth[nodo]+1;
- 
-            int c_size=dfs(c);
-            size+=c_size;
- 
-            if(c_size>max_c_size)
-            {
-                max_c_size=c_size;
-                heavy[nodo]=c;
-            }
+            max_c_size = c_size;
+            heavy[nodo] = c;
         }
     }
+
     return size;
 }
- 
+
+void decompose(int nodo, int h)
+{
+    head[nodo] = h;
+    pos[nodo] = cur_pos++;
+
+    if(heavy[nodo] != -1)
+        decompose(heavy[nodo], h);
+
+    for(int c : gf[nodo])
+    {
+        if(c != parent[nodo] && c != heavy[nodo])
+            decompose(c, c);
+    }
+}
+
+void init(int root = 0)
+{
+    fill(heavy, heavy + n, -1);
+
+    cur_pos = 0;
+    parent[root] = -1;
+    depth[root] = 0;
+
+    dfs(root);
+    decompose(root, root);
+}
+
+/* ==================== VERTICES ==================== */
+
+void set_vertex(int nodo, ll val)
+{
+    st.update(
+        1, 0, st.sz - 1,
+        pos[nodo], pos[nodo],
+        val
+    );
+}
+
 void update_on_vertex(int a, int b, ll val)
 {
-    for(; head[a] != head[b]; b = parent[head[b]])
+    while(head[a] != head[b])
     {
         if(depth[head[a]] > depth[head[b]])
-            swap(a,b);
- 
-        st.update(1,0,st.sz-1,pos[head[b]],pos[b],val);
+            swap(a, b);
+
+        st.update(
+            1, 0, st.sz - 1,
+            pos[head[b]], pos[b],
+            val
+        );
+
+        b = parent[head[b]];
     }
- 
+
     if(depth[a] > depth[b])
-        swap(a,b);
- 
-    st.update(1,0,st.sz-1,pos[a],pos[b],val);
+        swap(a, b);
+
+    st.update(
+        1, 0, st.sz - 1,
+        pos[a], pos[b],
+        val
+    );
 }
- 
+
 ll query_on_vertex(int a, int b)
 {
     ll res = 0;
- 
-    for(; head[a] != head[b]; b = parent[head[b]])
+
+    while(head[a] != head[b])
     {
         if(depth[head[a]] > depth[head[b]])
-            swap(a,b);
- 
-        res = max(res , st.query(1,0,st.sz-1,pos[head[b]],pos[b]));
+            swap(a, b);
+
+        res = max(
+            res,
+            st.query(
+                1, 0, st.sz - 1,
+                pos[head[b]], pos[b]
+            )
+        );
+
+        b = parent[head[b]];
     }
- 
+
     if(depth[a] > depth[b])
-        swap(a,b);
- 
-    res = max(res , st.query(1,0,st.sz-1,pos[a],pos[b]));
+        swap(a, b);
+
+    res = max(
+        res,
+        st.query(
+            1, 0, st.sz - 1,
+            pos[a], pos[b]
+        )
+    );
+
     return res;
 }
- 
- 
-void decompose(int v,int h)
+
+/* ==================== ARISTAS ==================== */
+
+// La arista (u, v) se guarda en el nodo mas profundo.
+void set_edge(int u, int v, ll val)
 {
-    head[v]=h;
-    pos[v]=cur_pos++;
-    if(heavy[v]!=-1)
+    if(parent[u] == v)
     {
-        decompose(heavy[v],h);
+        st.update(
+            1, 0, st.sz - 1,
+            pos[u], pos[u],
+            val
+        );
     }
-    for(int &c:gf[v])
+    else if(parent[v] == u)
     {
-        if(c!=parent[v] && c!=heavy[v])
-        {
-            decompose(c,c);
-        }
+        st.update(
+            1, 0, st.sz - 1,
+            pos[v], pos[v],
+            val
+        );
     }
 }
- 
-void init()
+
+void update_on_edge(int a, int b, ll val)
 {
-    // parent=vector<int>(n);
-    // depth=vector<int>(n);
-    // heavy=vector<int>(n);
-    // head=vector<int>(n);
-    // pos=vector<int>(n);
-    for(int i=0;i<MAXN;i++)heavy[i]=-1;
-    cur_pos=0;
- 
-    dfs(0);
-    decompose(0,0);
-}
- 
- 
-void update(int a,int b, ll val)//es query y update a la vez
-{
-    for(;head[a]!=head[b];b=parent[head[b]])
+    while(head[a] != head[b])
     {
-        if(depth[head[a]]>depth[head[b]])swap(a,b);
-        // ll resdomer=st.query()
-        st.update(1,0,st.sz-1,pos[head[b]],pos[b],val);
-        // res=(res*resdomer)%MOD;
+        if(depth[head[a]] > depth[head[b]])
+            swap(a, b);
+
+        st.update(
+            1, 0, st.sz - 1,
+            pos[head[b]], pos[b],
+            val
+        );
+
+        b = parent[head[b]];
     }
- 
-    if(depth[a]>depth[b])swap(a,b);
- 
-    if(a != b)st.update(1,0,st.sz-1,pos[a]+1,pos[b],val);
-}
- 
- 
-ll query(int a,int b)//quety on edges
-{
-    ll res=0;
- 
-    for(;head[a]!=head[b];b=parent[head[b]])
+
+    if(depth[a] > depth[b])
+        swap(a, b);
+
+    if(a != b)
     {
-        if(depth[head[a]]>depth[head[b]])swap(a,b);
-        // ll resdomer=st.query()
-        ll redomer=st.query(1,0,st.sz-1,pos[head[b]],pos[b]);
-        res=(res+redomer);
+        st.update(
+            1, 0, st.sz - 1,
+            pos[a] + 1, pos[b],
+            val
+        );
     }
- 
-    if(depth[a]>depth[b])swap(a,b);
- 
- 
-    ll last_heavy_path_res=0;
-    if(a != b)last_heavy_path_res=st.query(1,0,st.sz-1,pos[a]+1,pos[b]);
- 
-    // ll last_heavy_path_res=1;
-    res=(res+last_heavy_path_res);
+}
+
+ll query_on_edge(int a, int b)
+{
+    ll res = 0;
+
+    while(head[a] != head[b])
+    {
+        if(depth[head[a]] > depth[head[b]])
+            swap(a, b);
+
+        res += st.query(
+            1, 0, st.sz - 1,
+            pos[head[b]], pos[b]
+        );
+
+        b = parent[head[b]];
+    }
+
+    if(depth[a] > depth[b])
+        swap(a, b);
+
+    if(a != b)
+    {
+        res += st.query(
+            1, 0, st.sz - 1,
+            pos[a] + 1, pos[b]
+        );
+    }
+
     return res;
-}
- \end{lstlisting}
+}\end{lstlisting}
 
 \subsection{\texttt{isDag}}
 \begin{lstlisting}
@@ -4259,6 +5210,141 @@ struct ConvexHull
     }
 };
 \end{lstlisting}
+
+\subsection{\texttt{dpsums}}
+\begin{lstlisting}
+vector<char> sums(vector<int>&a,vector<int>&p){
+    int S=accumulate(a.begin(),a.end(),0);
+    vector<char>d(S+1); p.assign(S+1,-1); d[0]=1;
+    for(int i=0;i<a.size();i++)
+        for(int s=S-a[i];s>=0;s--)
+            if(d[s]&&!d[s+a[i]])
+                d[s+a[i]]=1,p[s+a[i]]=i;
+    return d;
+}
+
+vector<int> rec(int x,vector<int>&a,vector<int>&p){
+    vector<int>r;
+    while(x) r.push_back(p[x]),x-=a[p[x]];
+    reverse(r.begin(),r.end());
+    return r;
+}\end{lstlisting}
+
+\subsection{\texttt{leeChaoTree}}
+\begin{lstlisting}
+const ll inf = 2e18;
+
+struct Line {
+  ll m, c;
+  ll eval(ll x) {
+    return m * x + c;
+  }
+};
+struct node {
+  Line line;
+  node* left = nullptr;
+  node* right = nullptr;
+  node(Line line) : line(line) {}
+  void add_segment(Line nw, int l, int r, int L, int R) {
+    if (l > r || r < L || l > R) return;
+    int m = (l + 1 == r ? l : (l + r) / 2);
+    if (l >= L and r <= R) {
+      bool lef = nw.eval(l) < line.eval(l);
+      bool mid = nw.eval(m) < line.eval(m);
+      if (mid) swap(line, nw);
+      if (l == r) return;
+      if (lef != mid) {
+        if (left == nullptr) left = new node(nw);
+        else left -> add_segment(nw, l, m, L, R);
+      }
+      else {
+        if (right == nullptr) right = new node(nw);
+        else right -> add_segment(nw, m + 1, r, L, R);
+      }
+      return;
+    }
+    if (max(l, L) <= min(m, R)) {
+      if (left == nullptr) left = new node({0, inf});
+      left -> add_segment(nw, l, m, L, R);
+    }
+    if (max(m + 1, L) <= min(r, R)) {
+      if (right == nullptr) right = new node ({0, inf});
+      right -> add_segment(nw, m + 1, r, L, R);
+    }
+  }
+  ll query_segment(ll x, int l, int r, int L, int R) {
+    if (l > r || r < L || l > R) return inf;
+    int m = (l + 1 == r ? l : (l + r) / 2);
+    if (l >= L and r <= R) {
+      ll ans = line.eval(x);
+      if (l < r) {
+        if (x <= m && left != nullptr) ans = min(ans, left -> query_segment(x, l, m, L, R));
+        if (x > m && right != nullptr) ans = min(ans, right -> query_segment(x, m + 1, r, L, R));
+      }
+      return ans;
+    }
+    ll ans = inf;
+    if (max(l, L) <= min(m, R)) {
+      if (left == nullptr) left = new node({0, inf});
+      ans = min(ans, left -> query_segment(x, l, m, L, R));
+    }
+    if (max(m + 1, L) <= min(r, R)) {
+      if (right == nullptr) right = new node ({0, inf});
+      ans = min(ans, right -> query_segment(x, m + 1, r, L, R));
+    }
+    return ans;
+  }
+};
+
+struct LiChaoTree {
+  int L, R;
+  node* root;
+  LiChaoTree() : L(numeric_limits<int>::min() / 2), R(numeric_limits<int>::max() / 2), root(nullptr) {}
+  LiChaoTree(int L, int R) : L(L), R(R) {
+    root = new node({0, inf});
+  }
+  void add_line(Line line) {
+    root -> add_segment(line, L, R, L, R);
+  }
+  // y = mx + b: x in [l, r]
+  void add_segment(Line line, int l, int r) {
+    root -> add_segment(line, L, R, l, r);
+  }
+  ll query(ll x) {
+    return root -> query_segment(x, L, R, L, R);
+  }
+  ll query_segment(ll x, int l, int r) {
+    return root -> query_segment(x, l, r, L, R);
+  }
+};
+
+int32_t main() {
+  ios_base::sync_with_stdio(0);
+  cin.tie(0);
+  LiChaoTree t = LiChaoTree((int)-1e9, (int) 1e9);
+  int n, q; cin >> n >> q;
+  for (int i = 0; i < n; i++) {
+    ll l, r, a, b; cin >> l >> r >> a >> b;
+    r--;
+    t.add_segment({a, b}, l, r);
+  }
+  while (q--) {
+    int ty; cin >> ty;
+    if (ty == 0) {
+      ll l, r, a, b; cin >> l >> r >> a >> b;
+      r--;
+      t.add_segment({a, b}, l, r);
+    }
+    else {
+      ll x; cin >> x;
+      ll ans = t.query(x);
+      if (ans >= inf) cout << "INFINITY\n";
+      else cout << ans << '\n';
+    }
+  }
+  return 0;
+}
+// https://judge.yosupo.jp/problem/segment_add_get_min\end{lstlisting}
 
 \subsection{\texttt{lis}}
 \begin{lstlisting}

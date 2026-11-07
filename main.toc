@@ -1,89 +1,98 @@
 \babel@toc {spanish}{}\relax 
 \contentsline {section}{\numberline {1}Math}{1}{section.1}%
 \contentsline {subsection}{\numberline {1.1}\texttt {Catalan}}{1}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}\texttt {extended}}{1}{subsection.1.2}%
-\contentsline {subsection}{\numberline {1.3}\texttt {fastgcd}}{1}{subsection.1.3}%
-\contentsline {subsection}{\numberline {1.4}\texttt {fft}}{1}{subsection.1.4}%
-\contentsline {subsection}{\numberline {1.5}\texttt {gauss\_algebra\_lineal}}{2}{subsection.1.5}%
-\contentsline {subsection}{\numberline {1.6}\texttt {linearsieve}}{3}{subsection.1.6}%
-\contentsline {subsection}{\numberline {1.7}\texttt {matrizFibo}}{3}{subsection.1.7}%
-\contentsline {subsection}{\numberline {1.8}\texttt {multiply}}{3}{subsection.1.8}%
-\contentsline {subsection}{\numberline {1.9}\texttt {ntt}}{4}{subsection.1.9}%
-\contentsline {subsection}{\numberline {1.10}\texttt {starsandbars}}{4}{subsection.1.10}%
-\contentsline {section}{\numberline {2}Bits}{5}{section.2}%
-\contentsline {subsection}{\numberline {2.1}\texttt {SoSDP}}{5}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}\texttt {gray}}{5}{subsection.2.2}%
-\contentsline {section}{\numberline {3}Miscelanea}{5}{section.3}%
-\contentsline {subsection}{\numberline {3.1}\texttt {Plantilla}}{5}{subsection.3.1}%
-\contentsline {section}{\numberline {4}Datastructures}{6}{section.4}%
-\contentsline {subsection}{\numberline {4.1}\texttt {LowestCommonAncestor}}{6}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}\texttt {Mo}}{6}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}\texttt {QueueMin}}{8}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}\texttt {SegmentTree}}{9}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}\texttt {SparseTable}}{9}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}\texttt {UnionFind}}{10}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}\texttt {UnionFind2D}}{10}{subsection.4.7}%
-\contentsline {subsection}{\numberline {4.8}\texttt {fenwickTree}}{11}{subsection.4.8}%
-\contentsline {subsection}{\numberline {4.9}\texttt {lazy}}{11}{subsection.4.9}%
-\contentsline {subsection}{\numberline {4.10}\texttt {sqrt}}{12}{subsection.4.10}%
-\contentsline {subsection}{\numberline {4.11}\texttt {sqrtUpdateinSqrt}}{12}{subsection.4.11}%
-\contentsline {section}{\numberline {5}Strings}{13}{section.5}%
-\contentsline {subsection}{\numberline {5.1}\texttt {KMP}}{13}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}\texttt {ahocorasick}}{13}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}\texttt {hashing}}{17}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}\texttt {hashing2d}}{18}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}\texttt {hashingmersense}}{18}{subsection.5.5}%
-\contentsline {subsection}{\numberline {5.6}\texttt {lcs}}{19}{subsection.5.6}%
-\contentsline {subsection}{\numberline {5.7}\texttt {manacher}}{19}{subsection.5.7}%
-\contentsline {subsection}{\numberline {5.8}\texttt {suffixarray}}{20}{subsection.5.8}%
-\contentsline {subsection}{\numberline {5.9}\texttt {trie}}{20}{subsection.5.9}%
-\contentsline {subsection}{\numberline {5.10}\texttt {trie2}}{22}{subsection.5.10}%
-\contentsline {subsection}{\numberline {5.11}\texttt {zfunction}}{22}{subsection.5.11}%
-\contentsline {section}{\numberline {6}Geometry}{22}{section.6}%
-\contentsline {subsection}{\numberline {6.1}\texttt {KDTree}}{22}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}\texttt {Point}}{24}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}\texttt {convexHull}}{24}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}\texttt {geometrynotes}}{25}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}\texttt {iterativequerysegment}}{26}{subsection.6.5}%
-\contentsline {subsection}{\numberline {6.6}\texttt {laticepoint}}{26}{subsection.6.6}%
-\contentsline {subsection}{\numberline {6.7}\texttt {nearestVecino}}{26}{subsection.6.7}%
-\contentsline {subsection}{\numberline {6.8}\texttt {picks\_theorem}}{27}{subsection.6.8}%
-\contentsline {subsection}{\numberline {6.9}\texttt {pointinpoligon}}{27}{subsection.6.9}%
-\contentsline {subsection}{\numberline {6.10}\texttt {pointintpoligon}}{28}{subsection.6.10}%
-\contentsline {subsection}{\numberline {6.11}\texttt {twoSegmentIntersec}}{29}{subsection.6.11}%
-\contentsline {section}{\numberline {7}Primalidad}{30}{section.7}%
-\contentsline {subsection}{\numberline {7.1}\texttt {RabinMiller}}{30}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}\texttt {pollardRho}}{30}{subsection.7.2}%
-\contentsline {section}{\numberline {8}Graphs}{32}{section.8}%
-\contentsline {subsection}{\numberline {8.1}\texttt {2-sat}}{32}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}\texttt {2SAT}}{33}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}\texttt {Algoritmo\_hungaro\_de\_asignacion}}{35}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}\texttt {FordFulkerson}}{35}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}\texttt {HoprofKarp}}{36}{subsection.8.5}%
-\contentsline {subsection}{\numberline {8.6}\texttt {MinCost-MaxFlow\_DEsopo-Pape}}{36}{subsection.8.6}%
-\contentsline {subsection}{\numberline {8.7}\texttt {MinCostMaxFlow\_Dijkstra}}{37}{subsection.8.7}%
-\contentsline {subsection}{\numberline {8.8}\texttt {articulationpoint}}{39}{subsection.8.8}%
-\contentsline {subsection}{\numberline {8.9}\texttt {bridges}}{40}{subsection.8.9}%
-\contentsline {subsection}{\numberline {8.10}\texttt {centroid}}{40}{subsection.8.10}%
-\contentsline {subsection}{\numberline {8.11}\texttt {componentes\_fuertemente\_conexos}}{42}{subsection.8.11}%
-\contentsline {subsection}{\numberline {8.12}\texttt {dijstra}}{42}{subsection.8.12}%
-\contentsline {subsection}{\numberline {8.13}\texttt {dinic}}{43}{subsection.8.13}%
-\contentsline {subsection}{\numberline {8.14}\texttt {dinitz}}{44}{subsection.8.14}%
-\contentsline {subsection}{\numberline {8.15}\texttt {edmonkarp}}{45}{subsection.8.15}%
-\contentsline {subsection}{\numberline {8.16}\texttt {eulerianpath}}{45}{subsection.8.16}%
-\contentsline {subsection}{\numberline {8.17}\texttt {floyd\_warshall}}{46}{subsection.8.17}%
-\contentsline {subsection}{\numberline {8.18}\texttt {hld}}{47}{subsection.8.18}%
-\contentsline {subsection}{\numberline {8.19}\texttt {isDag}}{48}{subsection.8.19}%
-\contentsline {subsection}{\numberline {8.20}\texttt {isDagv2}}{49}{subsection.8.20}%
-\contentsline {subsection}{\numberline {8.21}\texttt {khun}}{49}{subsection.8.21}%
-\contentsline {subsection}{\numberline {8.22}\texttt {khunMaxbipartiteMatching}}{50}{subsection.8.22}%
-\contentsline {subsection}{\numberline {8.23}\texttt {lcabinaryliftin}}{50}{subsection.8.23}%
-\contentsline {subsection}{\numberline {8.24}\texttt {toposort}}{51}{subsection.8.24}%
-\contentsline {section}{\numberline {9}Overloads}{51}{section.9}%
-\contentsline {subsection}{\numberline {9.1}\texttt {pq}}{51}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}\texttt {set}}{51}{subsection.9.2}%
-\contentsline {section}{\numberline {10}Dp}{51}{section.10}%
-\contentsline {subsection}{\numberline {10.1}\texttt {LCA\_DP}}{51}{subsection.10.1}%
-\contentsline {subsection}{\numberline {10.2}\texttt {covexHullTrick}}{52}{subsection.10.2}%
-\contentsline {subsection}{\numberline {10.3}\texttt {lis}}{53}{subsection.10.3}%
-\contentsline {subsection}{\numberline {10.4}\texttt {list}}{53}{subsection.10.4}%
+\contentsline {subsection}{\numberline {1.2}\texttt {crt}}{1}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}\texttt {extended}}{2}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}\texttt {fastgcd}}{2}{subsection.1.4}%
+\contentsline {subsection}{\numberline {1.5}\texttt {fft}}{2}{subsection.1.5}%
+\contentsline {subsection}{\numberline {1.6}\texttt {gauss\_algebra\_lineal}}{3}{subsection.1.6}%
+\contentsline {subsection}{\numberline {1.7}\texttt {linearsieve}}{4}{subsection.1.7}%
+\contentsline {subsection}{\numberline {1.8}\texttt {matrizFibo}}{4}{subsection.1.8}%
+\contentsline {subsection}{\numberline {1.9}\texttt {multiply}}{4}{subsection.1.9}%
+\contentsline {subsection}{\numberline {1.10}\texttt {ntt}}{5}{subsection.1.10}%
+\contentsline {subsection}{\numberline {1.11}\texttt {starsandbars}}{5}{subsection.1.11}%
+\contentsline {section}{\numberline {2}Bits}{6}{section.2}%
+\contentsline {subsection}{\numberline {2.1}\texttt {SoSDP}}{6}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}\texttt {gray}}{6}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}\texttt {xorBasis}}{6}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Miscelanea}{7}{section.3}%
+\contentsline {subsection}{\numberline {3.1}\texttt {Plantilla}}{7}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}\texttt {bashCompilar}}{8}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}\texttt {paralelBinarySearch}}{8}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Datastructures}{9}{section.4}%
+\contentsline {subsection}{\numberline {4.1}\texttt {LowestCommonAncestor}}{9}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}\texttt {Mo}}{10}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}\texttt {QueueMin}}{11}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}\texttt {SegmentTree}}{12}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}\texttt {SegmetTreeBeats}}{13}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}\texttt {SparseTable}}{17}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}\texttt {UnionFind}}{18}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}\texttt {UnionFind2D}}{18}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}\texttt {fenwickTree}}{18}{subsection.4.9}%
+\contentsline {subsection}{\numberline {4.10}\texttt {lazy}}{19}{subsection.4.10}%
+\contentsline {subsection}{\numberline {4.11}\texttt {sqrt}}{19}{subsection.4.11}%
+\contentsline {subsection}{\numberline {4.12}\texttt {sqrtUpdateinSqrt}}{20}{subsection.4.12}%
+\contentsline {subsection}{\numberline {4.13}\texttt {wavelet\_tree}}{21}{subsection.4.13}%
+\contentsline {section}{\numberline {5}Strings}{22}{section.5}%
+\contentsline {subsection}{\numberline {5.1}\texttt {KMP}}{22}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}\texttt {ahocorasick}}{23}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}\texttt {hashing}}{26}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}\texttt {hashing2d}}{27}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}\texttt {hashingmersense}}{28}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}\texttt {lcs}}{28}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}\texttt {manacher}}{28}{subsection.5.7}%
+\contentsline {subsection}{\numberline {5.8}\texttt {stringMatchingFFT}}{29}{subsection.5.8}%
+\contentsline {subsection}{\numberline {5.9}\texttt {suffixarray}}{30}{subsection.5.9}%
+\contentsline {subsection}{\numberline {5.10}\texttt {trie}}{31}{subsection.5.10}%
+\contentsline {subsection}{\numberline {5.11}\texttt {trie2}}{32}{subsection.5.11}%
+\contentsline {subsection}{\numberline {5.12}\texttt {zfunction}}{33}{subsection.5.12}%
+\contentsline {section}{\numberline {6}Geometry}{33}{section.6}%
+\contentsline {subsection}{\numberline {6.1}\texttt {KDTree}}{33}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}\texttt {Point}}{34}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}\texttt {convexHull}}{35}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}\texttt {geometrynotes}}{36}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}\texttt {iterativequerysegment}}{36}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}\texttt {laticepoint}}{36}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}\texttt {nearestVecino}}{37}{subsection.6.7}%
+\contentsline {subsection}{\numberline {6.8}\texttt {picks\_theorem}}{38}{subsection.6.8}%
+\contentsline {subsection}{\numberline {6.9}\texttt {pointinpoligon}}{38}{subsection.6.9}%
+\contentsline {subsection}{\numberline {6.10}\texttt {pointintpoligon}}{39}{subsection.6.10}%
+\contentsline {subsection}{\numberline {6.11}\texttt {twoSegmentIntersec}}{40}{subsection.6.11}%
+\contentsline {section}{\numberline {7}Primalidad}{40}{section.7}%
+\contentsline {subsection}{\numberline {7.1}\texttt {RabinMiller}}{40}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}\texttt {pollardRho}}{41}{subsection.7.2}%
+\contentsline {section}{\numberline {8}Graphs}{42}{section.8}%
+\contentsline {subsection}{\numberline {8.1}\texttt {2-sat}}{42}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}\texttt {2SAT}}{43}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}\texttt {Algoritmo\_hungaro\_de\_asignacion}}{45}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}\texttt {FordFulkerson}}{46}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}\texttt {HoprofKarp}}{46}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}\texttt {MinCost-MaxFlow\_DEsopo-Pape}}{47}{subsection.8.6}%
+\contentsline {subsection}{\numberline {8.7}\texttt {MinCostMaxFlow\_Dijkstra}}{48}{subsection.8.7}%
+\contentsline {subsection}{\numberline {8.8}\texttt {articulationpoint}}{50}{subsection.8.8}%
+\contentsline {subsection}{\numberline {8.9}\texttt {bridges}}{50}{subsection.8.9}%
+\contentsline {subsection}{\numberline {8.10}\texttt {centroid}}{51}{subsection.8.10}%
+\contentsline {subsection}{\numberline {8.11}\texttt {componentes\_fuertemente\_conexos}}{52}{subsection.8.11}%
+\contentsline {subsection}{\numberline {8.12}\texttt {dijstra}}{53}{subsection.8.12}%
+\contentsline {subsection}{\numberline {8.13}\texttt {dinic}}{53}{subsection.8.13}%
+\contentsline {subsection}{\numberline {8.14}\texttt {dinitz}}{54}{subsection.8.14}%
+\contentsline {subsection}{\numberline {8.15}\texttt {edmonkarp}}{55}{subsection.8.15}%
+\contentsline {subsection}{\numberline {8.16}\texttt {eulerianpath}}{56}{subsection.8.16}%
+\contentsline {subsection}{\numberline {8.17}\texttt {floyd\_warshall}}{57}{subsection.8.17}%
+\contentsline {subsection}{\numberline {8.18}\texttt {hld}}{57}{subsection.8.18}%
+\contentsline {subsection}{\numberline {8.19}\texttt {isDag}}{60}{subsection.8.19}%
+\contentsline {subsection}{\numberline {8.20}\texttt {isDagv2}}{60}{subsection.8.20}%
+\contentsline {subsection}{\numberline {8.21}\texttt {khun}}{60}{subsection.8.21}%
+\contentsline {subsection}{\numberline {8.22}\texttt {khunMaxbipartiteMatching}}{61}{subsection.8.22}%
+\contentsline {subsection}{\numberline {8.23}\texttt {lcabinaryliftin}}{61}{subsection.8.23}%
+\contentsline {subsection}{\numberline {8.24}\texttt {toposort}}{62}{subsection.8.24}%
+\contentsline {section}{\numberline {9}Overloads}{62}{section.9}%
+\contentsline {subsection}{\numberline {9.1}\texttt {pq}}{62}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}\texttt {set}}{62}{subsection.9.2}%
+\contentsline {section}{\numberline {10}Dp}{63}{section.10}%
+\contentsline {subsection}{\numberline {10.1}\texttt {LCA\_DP}}{63}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}\texttt {covexHullTrick}}{64}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}\texttt {dpsums}}{64}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}\texttt {leeChaoTree}}{64}{subsection.10.4}%
+\contentsline {subsection}{\numberline {10.5}\texttt {lis}}{66}{subsection.10.5}%
+\contentsline {subsection}{\numberline {10.6}\texttt {list}}{66}{subsection.10.6}%
