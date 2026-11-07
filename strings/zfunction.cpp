@@ -16,3 +16,6 @@ vector<int> z_function(string s) {
     }
     return z;
 }
+// Nuevas cadenas unicas luego de insertar 1 caracter
+// Sacar funcion z y nuevas subcadenas unicas
+// [s']-zmax=nuevas subcadenas unicas
