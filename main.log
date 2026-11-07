@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2025.8.29)  7 NOV 2026 00:15
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2025.8.29)  7 NOV 2026 00:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -618,8 +618,8 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: D01B084776AAB4D6CE3DE043FFEDDEDA;10370.
  ) 
 Here is how much of TeX's memory you used:
- 20856 strings out of 477989
- 314558 string characters out of 5839005
+ 20859 strings out of 477989
+ 314606 string characters out of 5839005
  2640330 words of memory out of 5000000
  35465 multiletter control sequences out of 15000+600000
  520000 words of font info for 49 fonts, out of 8000000 for 9000
@@ -633,10 +633,10 @@ ljfour/jknappen/ec/ectt1000.600pk> </home/romerproblem/.texlive2022/texmf-var/f
 onts/pk/ljfour/jknappen/ec/ecrm1000.600pk> </home/romerproblem/.texlive2022/tex
 mf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000.600pk> </home/romerproblem/.texlive
 2022/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk>
-Output written on main.pdf (69 pages, 458923 bytes).
+Output written on main.pdf (69 pages, 459444 bytes).
 PDF statistics:
- 7439 PDF objects out of 8907 (max. 8388607)
- 7043 compressed objects within 71 object streams
- 5333 named destinations out of 6186 (max. 500000)
+ 7443 PDF objects out of 8907 (max. 8388607)
+ 7047 compressed objects within 71 object streams
+ 5336 named destinations out of 6186 (max. 500000)
  777 words of extra memory for PDF output out of 10000 (max. 10000000)
 

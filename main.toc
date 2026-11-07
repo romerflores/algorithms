@@ -88,7 +88,7 @@
 \contentsline {subsection}{\numberline {8.24}\texttt {toposort}}{62}{subsection.8.24}%
 \contentsline {section}{\numberline {9}Overloads}{62}{section.9}%
 \contentsline {subsection}{\numberline {9.1}\texttt {pq}}{62}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}\texttt {set}}{62}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.2}\texttt {set}}{63}{subsection.9.2}%
 \contentsline {section}{\numberline {10}Dp}{63}{section.10}%
 \contentsline {subsection}{\numberline {10.1}\texttt {LCA\_DP}}{63}{subsection.10.1}%
 \contentsline {subsection}{\numberline {10.2}\texttt {covexHullTrick}}{64}{subsection.10.2}%
